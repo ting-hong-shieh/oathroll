@@ -1,0 +1,864 @@
+{
+  "address": "HaaUtRdJLNAhEShaA7ibDDHoz5truec23qf5ZSq4eGGd",
+  "metadata": {
+    "name": "oathroll",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Oathroll: an AI game master whose rulings are sealed on Solana before the dice exist"
+  },
+  "instructions": [
+    {
+      "name": "amend_check",
+      "docs": [
+        "Revise a draft's DC. Only possible before the ruling is sealed; afterwards every attempt fails."
+      ],
+      "discriminator": [
+        96,
+        3,
+        191,
+        168,
+        85,
+        39,
+        66,
+        214
+      ],
+      "accounts": [
+        {
+          "name": "gm",
+          "signer": true,
+          "relations": [
+            "session"
+          ]
+        },
+        {
+          "name": "session",
+          "relations": [
+            "check"
+          ]
+        },
+        {
+          "name": "check",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "dc",
+          "type": "u8"
+        },
+        {
+          "name": "plea",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "create_session",
+      "docs": [
+        "Start a run. `player` is the browser's public key; `gm` (the Keeper's server key)",
+        "pays and is the only key allowed to write checks for this session."
+      ],
+      "discriminator": [
+        242,
+        193,
+        143,
+        179,
+        150,
+        25,
+        122,
+        227
+      ],
+      "accounts": [
+        {
+          "name": "gm",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "player"
+        },
+        {
+          "name": "session",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  115,
+                  115,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "draft_check",
+      "docs": [
+        "The Keeper writes a ruling for the player's declared action. Still editable."
+      ],
+      "discriminator": [
+        215,
+        221,
+        195,
+        159,
+        206,
+        144,
+        192,
+        79
+      ],
+      "accounts": [
+        {
+          "name": "gm",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "session"
+          ]
+        },
+        {
+          "name": "session",
+          "writable": true
+        },
+        {
+          "name": "check",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  104,
+                  101,
+                  99,
+                  107
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "session"
+              },
+              {
+                "kind": "account",
+                "path": "session.next_seq",
+                "account": "Session"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "action_kind",
+          "type": "u8"
+        },
+        {
+          "name": "action_text",
+          "type": "string"
+        },
+        {
+          "name": "dc",
+          "type": "u8"
+        },
+        {
+          "name": "outcomes",
+          "type": {
+            "array": [
+              {
+                "defined": {
+                  "name": "Outcome"
+                }
+              },
+              4
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "request_roll",
+      "docs": [
+        "Ask MagicBlock VRF for randomness. Only a sealed check can be rolled, and only once."
+      ],
+      "discriminator": [
+        98,
+        118,
+        98,
+        29,
+        96,
+        208,
+        255,
+        97
+      ],
+      "accounts": [
+        {
+          "name": "gm",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "session"
+          ]
+        },
+        {
+          "name": "session",
+          "writable": true,
+          "relations": [
+            "check"
+          ]
+        },
+        {
+          "name": "check",
+          "writable": true
+        },
+        {
+          "name": "oracle_queue",
+          "writable": true
+        },
+        {
+          "name": "program_identity",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "vrf_program",
+          "address": "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz"
+        },
+        {
+          "name": "slot_hashes",
+          "address": "SysvarS1otHashes111111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "resolve_roll",
+      "docs": [
+        "Called by the VRF program with fresh randomness. The program alone decides the row."
+      ],
+      "discriminator": [
+        35,
+        65,
+        80,
+        150,
+        53,
+        30,
+        20,
+        242
+      ],
+      "accounts": [
+        {
+          "name": "vrf_program_identity",
+          "docs": [
+            "Scoped VRF identity PDA, bound to this program. Its presence as a signer proves",
+            "the callback was issued by the VRF program for this program."
+          ],
+          "signer": true
+        },
+        {
+          "name": "check",
+          "writable": true
+        },
+        {
+          "name": "session",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "randomness",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "seal_check",
+      "docs": [
+        "Freeze the ruling. From here on the DC and the outcome table are immutable."
+      ],
+      "discriminator": [
+        144,
+        15,
+        40,
+        28,
+        196,
+        15,
+        177,
+        253
+      ],
+      "accounts": [
+        {
+          "name": "gm",
+          "signer": true,
+          "relations": [
+            "session"
+          ]
+        },
+        {
+          "name": "session",
+          "relations": [
+            "check"
+          ]
+        },
+        {
+          "name": "check",
+          "writable": true
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Check",
+      "discriminator": [
+        184,
+        116,
+        144,
+        69,
+        156,
+        212,
+        121,
+        212
+      ]
+    },
+    {
+      "name": "Session",
+      "discriminator": [
+        243,
+        81,
+        72,
+        115,
+        214,
+        188,
+        72,
+        144
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "CheckAmended",
+      "discriminator": [
+        73,
+        86,
+        234,
+        221,
+        170,
+        248,
+        97,
+        23
+      ]
+    },
+    {
+      "name": "CheckDrafted",
+      "discriminator": [
+        194,
+        117,
+        238,
+        248,
+        175,
+        227,
+        255,
+        156
+      ]
+    },
+    {
+      "name": "CheckSealed",
+      "discriminator": [
+        204,
+        151,
+        65,
+        94,
+        250,
+        82,
+        166,
+        233
+      ]
+    },
+    {
+      "name": "RollRequested",
+      "discriminator": [
+        225,
+        43,
+        126,
+        11,
+        108,
+        114,
+        143,
+        63
+      ]
+    },
+    {
+      "name": "RollResolved",
+      "discriminator": [
+        120,
+        96,
+        27,
+        206,
+        76,
+        197,
+        88,
+        103
+      ]
+    },
+    {
+      "name": "SessionCreated",
+      "discriminator": [
+        107,
+        111,
+        254,
+        25,
+        21,
+        122,
+        220,
+        225
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "TableSealed",
+      "msg": "The ruling is sealed. The Keeper is bound and cannot change it."
+    },
+    {
+      "code": 6001,
+      "name": "DcOutOfBounds",
+      "msg": "DC is outside the allowed band for this kind of action."
+    },
+    {
+      "code": 6002,
+      "name": "BadActionKind",
+      "msg": "Unknown action kind."
+    },
+    {
+      "code": 6003,
+      "name": "TextTooLong",
+      "msg": "Text is empty or too long."
+    },
+    {
+      "code": 6004,
+      "name": "EffectOutOfBounds",
+      "msg": "Outcome effect is outside the allowed range."
+    },
+    {
+      "code": 6005,
+      "name": "InconsistentTable",
+      "msg": "Outcome table is inconsistent: a failure cannot be kinder than a success."
+    },
+    {
+      "code": 6006,
+      "name": "CheckAlreadyOpen",
+      "msg": "Another check is still open in this session."
+    },
+    {
+      "code": 6007,
+      "name": "RunOver",
+      "msg": "This run is over."
+    },
+    {
+      "code": 6008,
+      "name": "NotKeeper",
+      "msg": "Only the session's Keeper key may do this."
+    },
+    {
+      "code": 6009,
+      "name": "WrongSession",
+      "msg": "Check does not belong to this session."
+    },
+    {
+      "code": 6010,
+      "name": "NotSealed",
+      "msg": "Only a sealed check can be rolled."
+    },
+    {
+      "code": 6011,
+      "name": "NotPending",
+      "msg": "Check is not waiting for randomness."
+    },
+    {
+      "code": 6012,
+      "name": "BadQueue",
+      "msg": "Unexpected oracle queue."
+    },
+    {
+      "code": 6013,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow."
+    }
+  ],
+  "types": [
+    {
+      "name": "Check",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "session",
+            "type": "pubkey"
+          },
+          {
+            "name": "seq",
+            "type": "u16"
+          },
+          {
+            "name": "action_kind",
+            "type": "u8"
+          },
+          {
+            "name": "action_text",
+            "type": "string"
+          },
+          {
+            "name": "dc",
+            "type": "u8"
+          },
+          {
+            "name": "outcomes",
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "Outcome"
+                  }
+                },
+                4
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "CheckStatus"
+              }
+            }
+          },
+          {
+            "name": "amendments",
+            "type": "u8"
+          },
+          {
+            "name": "draft_slot",
+            "type": "u64"
+          },
+          {
+            "name": "seal_slot",
+            "type": "u64"
+          },
+          {
+            "name": "request_slot",
+            "type": "u64"
+          },
+          {
+            "name": "resolve_slot",
+            "type": "u64"
+          },
+          {
+            "name": "randomness",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "roll",
+            "type": "u8"
+          },
+          {
+            "name": "outcome",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CheckAmended",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "check",
+            "type": "pubkey"
+          },
+          {
+            "name": "dc",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CheckDrafted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "check",
+            "type": "pubkey"
+          },
+          {
+            "name": "seq",
+            "type": "u16"
+          },
+          {
+            "name": "dc",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CheckSealed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "check",
+            "type": "pubkey"
+          },
+          {
+            "name": "seq",
+            "type": "u16"
+          },
+          {
+            "name": "dc",
+            "type": "u8"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CheckStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Draft"
+          },
+          {
+            "name": "Sealed"
+          },
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Resolved"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Outcome",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "text",
+            "type": "string"
+          },
+          {
+            "name": "nerve_delta",
+            "type": "i8"
+          },
+          {
+            "name": "progress_delta",
+            "type": "i8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RollRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "check",
+            "type": "pubkey"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RollResolved",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "check",
+            "type": "pubkey"
+          },
+          {
+            "name": "roll",
+            "type": "u8"
+          },
+          {
+            "name": "dc",
+            "type": "u8"
+          },
+          {
+            "name": "outcome",
+            "type": "u8"
+          },
+          {
+            "name": "nerve",
+            "type": "i8"
+          },
+          {
+            "name": "tide",
+            "type": "u8"
+          },
+          {
+            "name": "progress",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Session",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "gm",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "nerve",
+            "type": "i8"
+          },
+          {
+            "name": "tide",
+            "type": "u8"
+          },
+          {
+            "name": "progress",
+            "type": "u8"
+          },
+          {
+            "name": "next_seq",
+            "type": "u16"
+          },
+          {
+            "name": "open_check",
+            "type": "bool"
+          },
+          {
+            "name": "created_slot",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SessionCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "session",
+            "type": "pubkey"
+          },
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "gm",
+            "type": "pubkey"
+          }
+        ]
+      }
+    }
+  ]
+}

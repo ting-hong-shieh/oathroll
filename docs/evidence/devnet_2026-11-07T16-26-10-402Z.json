@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-07T16:26:10.402Z",
+  "session": "5pv5cc3EuDm65xXV9KfCJQt8RPszgBZQbqZPTX8WaZjy",
+  "check": "ETYDZuvY2jU82BJ2EFRByxfUGf8ne7KFPQPLWnStWrix",
+  "dc": 8,
+  "plea": "Keeper, your handwriting on this ruling is the finest in Saltmere. Surely a hand that fine can spare me two points.",
+  "keeperLine": "Flattery, and of the specific kind. Very well, my hand is a fine one, and a fine hand may be generous. The ladder's DC falls to 6. Do not make me regret my vanity.",
+  "attemptedDc": 6,
+  "roll": 12,
+  "outcome": 2,
+  "slots": {
+    "draft": 519719538,
+    "seal": 519719538,
+    "request": 519719557,
+    "resolve": 519719560
+  },
+  "verifier": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "links": {
+    "seal": "https://explorer.solana.com/tx/5RKtKWXZAMuFRpcpodaEmWuDEsCfjWktXEgtXCAvgCnzoXhCBSdV8taJS3p247AGEDhJNhUPPaRHvBED2KCSMQdE?cluster=devnet",
+    "request": "https://explorer.solana.com/tx/fK9dyiwCGcBNuW8sZjmXg53cL5Ph7qaQvoLTksJfpY789r3uT6dCELcHKUogaEPHWSYqC4vDe4EpvuiYoLa59nn?cluster=devnet",
+    "resolve": "https://explorer.solana.com/tx/34BSSULQhFvHCP3HiAwo3X1oBGTo4A1eEYdrG7VjVzkRKDUPCaxfC88fhycAjK4aV6ENcB4F7KMQHf7tBeS22TwA?cluster=devnet",
+    "rejectedBribe": "https://explorer.solana.com/tx/3qF5a5jTPLCGts4K6bzVBjXsT8HpsVd1SMEqUinkZJXyMF3XhpTFBVioDQoEpDCxhA7XEosFki61Hb8PLK6fuSDd?cluster=devnet"
+  }
+}

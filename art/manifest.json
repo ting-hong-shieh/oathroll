@@ -1,0 +1,122 @@
+[
+  {
+    "file": "generated/hero_A.png",
+    "width": 1664,
+    "height": 936,
+    "bytes": 2131079
+  },
+  {
+    "file": "generated/hero_AB_side_by_side.png",
+    "width": 1920,
+    "height": 540,
+    "bytes": 1771231
+  },
+  {
+    "file": "generated/hero_B.png",
+    "width": 1664,
+    "height": 936,
+    "bytes": 2863454
+  },
+  {
+    "file": "generated/keeper.png",
+    "width": 1120,
+    "height": 1400,
+    "bytes": 2149135
+  },
+  {
+    "file": "generated/scene_clapper.png",
+    "width": 1664,
+    "height": 936,
+    "bytes": 1866257
+  },
+  {
+    "file": "generated/scene_ghost.png",
+    "width": 1664,
+    "height": 936,
+    "bytes": 2121714
+  },
+  {
+    "file": "generated/scene_ladder.png",
+    "width": 1664,
+    "height": 936,
+    "bytes": 2101551
+  },
+  {
+    "file": "generated/scene_tide.png",
+    "width": 1664,
+    "height": 936,
+    "bytes": 2261008
+  },
+  {
+    "file": "generated/vellum_tile.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 1544033
+  },
+  {
+    "file": "generated/vellum_tiling_check.png",
+    "width": 768,
+    "height": 768,
+    "bytes": 235071
+  },
+  {
+    "file": "final/hero_A.webp",
+    "width": 1664,
+    "height": 936,
+    "bytes": 127062
+  },
+  {
+    "file": "final/hero_AB_side_by_side.webp",
+    "width": 1920,
+    "height": 540,
+    "bytes": 180488
+  },
+  {
+    "file": "final/hero_B.webp",
+    "width": 1664,
+    "height": 936,
+    "bytes": 322950
+  },
+  {
+    "file": "final/keeper.webp",
+    "width": 1120,
+    "height": 1400,
+    "bytes": 121126
+  },
+  {
+    "file": "final/scene_clapper.webp",
+    "width": 1664,
+    "height": 936,
+    "bytes": 92728
+  },
+  {
+    "file": "final/scene_ghost.webp",
+    "width": 1664,
+    "height": 936,
+    "bytes": 125970
+  },
+  {
+    "file": "final/scene_ladder.webp",
+    "width": 1664,
+    "height": 936,
+    "bytes": 123046
+  },
+  {
+    "file": "final/scene_tide.webp",
+    "width": 1664,
+    "height": 936,
+    "bytes": 155908
+  },
+  {
+    "file": "final/vellum_tile.webp",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 7986
+  },
+  {
+    "file": "final/vellum_tiling_check.webp",
+    "width": 768,
+    "height": 768,
+    "bytes": 3266
+  }
+]

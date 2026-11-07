@@ -1,0 +1,35 @@
+{
+  "blender_hero_desk.webp": {
+    "bytes": 32718,
+    "width": 1920,
+    "height": 1080
+  },
+  "seal_cracked.webp": {
+    "bytes": 57992,
+    "width": 1024,
+    "height": 1024
+  },
+  "d20_spin.webp": {
+    "bytes": 402030,
+    "frames": 48,
+    "duration_ms": 2000,
+    "loop": "infinite",
+    "width": 512,
+    "height": 512
+  },
+  "d20_rest.webp": {
+    "bytes": 22390,
+    "width": 1024,
+    "height": 1024
+  },
+  "seal_intact.webp": {
+    "bytes": 49560,
+    "width": 1024,
+    "height": 1024
+  },
+  "blender_cover.webp": {
+    "bytes": 14188,
+    "width": 1120,
+    "height": 560
+  }
+}

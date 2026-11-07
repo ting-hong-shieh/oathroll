@@ -1,0 +1,2 @@
+spin --start 25 --end 28 | 28.33s | exit 0
+spin --start 29 --end 32 | 26.77s | exit 0

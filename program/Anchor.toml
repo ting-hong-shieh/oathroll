@@ -1,0 +1,16 @@
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+oathroll = "HaaUtRdJLNAhEShaA7ibDDHoz5truec23qf5ZSq4eGGd"
+
+[programs.localnet]
+oathroll = "HaaUtRdJLNAhEShaA7ibDDHoz5truec23qf5ZSq4eGGd"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "echo 'tests run via cargo test'"

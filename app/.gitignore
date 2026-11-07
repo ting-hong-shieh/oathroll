@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.env*
+!.env.example
+.oathroll/
+test-results/
+playwright-report/
+*.tsbuildinfo
+lib/backend-selected.ts

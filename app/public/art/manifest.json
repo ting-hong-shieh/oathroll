@@ -1,0 +1,12 @@
+{
+  "hero": "/art/hero_A.webp",
+  "scene": "/art/scene_ladder.webp",
+  "keeper": "/art/keeper.webp",
+  "vellum": "/art/vellum_tile.webp",
+  "scenes": [
+    "/art/scene_ladder.webp",
+    "/art/scene_ghost.webp",
+    "/art/scene_clapper.webp",
+    "/art/scene_tide.webp"
+  ]
+}
