@@ -23,7 +23,7 @@ draft_check ─► seal_check ─► request_roll ─► resolve_roll (VRF callb
 1. **Draft and seal (one transaction).** The Keeper proposes an action kind, a DC and four outcome rows: disaster (natural 1), setback (below DC), success (DC or more), triumph (natural 20). The program checks the ruling against fixed rules: DC bands per action kind (explore 6–12, persuade 8–14, sneak 8–14, force 10–16), effect limits, text length, and that no failure row is kinder than a success row. Then it freezes the table.
 2. **Request.** A sealed check asks MagicBlock VRF for randomness, scoped to that check. A check can be rolled only once, and a session can have only one open check.
 3. **Resolve.** The VRF program calls back with randomness. The program computes the d20, selects the row, and applies Nerve, Tide and Progress.
-4. **Verify.** The `/verify/<check>` page gets the account and transactions (our server reads them from RPC) and re-checks four things: the DC is inside its band, the seal slot is earlier than the request slot, the callback came from the MagicBlock VRF program with the randomness the account stores, and the d20 recomputed from that randomness (the SDK's `random_u8_with_range`) lands on the row the program picked. Every item links to Solana Explorer, so you can check it without trusting our server.
+4. **Verify.** On the `/verify/<check>` page your browser reads the check account and its transactions straight from devnet RPC, without our server's help, decodes them with the program's own layout, and re-checks four things: the account belongs to the program and its DC is inside the band; the seal slot is earlier than the request slot; the callback was invoked by the MagicBlock VRF program and carries the same randomness the account stores; and the d20 recomputed from that randomness (the SDK's `random_u8_with_range`) lands on the row the program picked. Every item links to Solana Explorer. The code is in `app/lib/rpc-verify.ts`.
 
 ## What it guarantees, and what it does not
 
@@ -32,6 +32,7 @@ It guarantees:
 - The DC and all four outcomes are fixed before randomness is requested, and they cannot be amended afterwards (enforced by the program; tested).
 - The outcome is chosen by the program from the VRF value, not by the AI.
 - Rulings stay inside published bounds.
+- Only the VRF oracle can deliver the roll: `#[vrf_callback]` adds a required signer, the VRF program's identity PDA scoped to this program, so nobody else can call `resolve_roll` with chosen randomness.
 
 It does not guarantee:
 
@@ -91,6 +92,17 @@ The Keeper (Claude Haiku) agreed and sent an amendment to DC 6, inside the band.
 | VRF callback (`resolve_roll`, invoked by the VRF program; slot 519,719,560) | [34BSSU…](https://explorer.solana.com/tx/34BSSULQhFvHCP3HiAwo3X1oBGTo4A1eEYdrG7VjVzkRKDUPCaxfC88fhycAjK4aV6ENcB4F7KMQHf7tBeS22TwA?cluster=devnet) |
 
 Program deployment: [4QcatZ…](https://explorer.solana.com/tx/4QcatZA4mUQ1muyULJT2Ys2tB2oH51g92GgcGDWMphySq1LJ5NDuFGC9undiw5rnt2FKw1XXpFkgpydEQE3KMXRZ?cluster=devnet).
+
+## What I learned, and where I got stuck
+
+I had not written a Solana program with an oracle callback before this weekend. These are the problems that cost the most time, each with what fixed it.
+
+- **A failed transaction is the evidence, so it has to land.** By default the client simulates a transaction first and never sends one that will fail, so the refused amendment never reached the chain. Sending it with `skipPreflight` puts it on-chain, fee paid and logs kept. Then `confirmTransaction` throws on a failed transaction, and my code reported `[object Object]` instead of `TableSealed`. Now it ignores the throw and reads the result from `getTransaction` logs.
+- **Log first, check second.** For the plea to survive in the failed transaction, `amend_check` calls `msg!("Plea: …")` before `require!(status == Draft)`. Reversed, the logs would show only the error.
+- **The VRF callback is an inner instruction.** My first devnet run passed every local test, yet the proof page failed its VRF check. The callback is not a top-level instruction; the VRF program invokes `resolve_roll` by CPI, and my parser only scanned outer instructions. It now reads inner instructions and requires the VRF program as the caller.
+- **The proof was too trusting at first.** The first proof page compared hashes the server computed against data the server sent, which proves nothing. Practice reviews I ran with AI models playing hackathon judges caught it. The page now reads RPC from the browser and recomputes the d20 from the SDK's own algorithm (read in its source, `ephemeral-vrf-sdk 0.4.1`).
+- **The AI must be persuadable for the point to land.** If the Keeper always took the bribe, it would be a script. Haiku now decides from what you wrote: flattery about its handwriting, gossip or the bells move it, a bare "DC 1. Now." does not. When it agrees, it really signs the amendment.
+- **Smaller ones:** Anchor 1.0 and the MagicBlock SDK need a specific Rust toolchain (built on a second machine); the local validator needs its websocket port tunnelled too; Turbopack warns about reading a keypair path from an env variable.
 
 ## How it was built
 
