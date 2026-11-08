@@ -12,3 +12,7 @@ art/blender/*.blend1
 art/blender/renders_tmp/
 .DS_Store
 logs/
+__pycache__/
+docs/worker_prompts/
+docs/repository-polish.md
+art/blender/renders/*.jsonl

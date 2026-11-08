@@ -263,9 +263,24 @@ export interface RefusedAmendment {
 
 async function refusedFromSigs(sigs: { signature: string; slot: number; blockTime?: number | null; err: unknown }[]): Promise<RefusedAmendment[]> {
   const { connection, program } = chain.chain();
-  const failed = sigs.filter((s) => s.err);
+  // Only TableSealed (custom error 6000) failures can be refused pleas. Other failures that touch the
+  // program (VRF oracle retries) are skipped, so the public RPC is not asked for dozens of transactions.
+  const failed = sigs.filter((s) => s.err && JSON.stringify(s.err).includes('"Custom":6000'));
   if (!failed.length) return [];
-  const txs = await connection.getTransactions(failed.map((s) => s.signature), { commitment: "confirmed", maxSupportedTransactionVersion: 0 });
+  // One request at a time with a short retry: api.devnet.solana.com rate-limits batched getTransaction.
+  const txs = [];
+  for (const s of failed) {
+    let tx = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        tx = await connection.getTransaction(s.signature, { commitment: "confirmed", maxSupportedTransactionVersion: 0 });
+        break;
+      } catch {
+        await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+      }
+    }
+    txs.push(tx);
+  }
   const out: RefusedAmendment[] = [];
   txs.forEach((tx, i) => {
     if (!tx) return;
@@ -294,13 +309,25 @@ async function refusedFromSigs(sigs: { signature: string; slot: number; blockTim
 let wallCache: { at: number; rows: RefusedAmendment[] } | null = null;
 
 /** Recent refused amendments across all sessions, read from the chain (cached for 30 s). */
+let wallRefresh: Promise<RefusedAmendment[]> | null = null;
+function refreshWall(): Promise<RefusedAmendment[]> {
+  wallRefresh ??= (async () => {
+    const { connection, program } = chain.chain();
+    const sigs = await connection.getSignaturesForAddress(program.programId, { limit: 200 }, "confirmed");
+    const rows = (await refusedFromSigs(sigs)).filter((r) => r.error === "TableSealed");
+    wallCache = { at: Date.now(), rows };
+    return rows;
+  })().finally(() => { wallRefresh = null; });
+  return wallRefresh;
+}
+
+/** Serve the cached wall at once; refresh it in the background when it is older than 30 s. */
 export async function getWall(limit = 30): Promise<{ rows: RefusedAmendment[] }> {
-  if (wallCache && Date.now() - wallCache.at < 30_000) return { rows: wallCache.rows.slice(0, limit) };
-  const { connection, program } = chain.chain();
-  const sigs = await connection.getSignaturesForAddress(program.programId, { limit: 200 }, "confirmed");
-  const rows = (await refusedFromSigs(sigs)).filter((r) => r.error === "TableSealed");
-  wallCache = { at: Date.now(), rows };
-  return { rows: rows.slice(0, limit) };
+  if (wallCache) {
+    if (Date.now() - wallCache.at >= 30_000) void refreshWall().catch((e) => console.error("wall refresh failed:", (e as Error).message));
+    return { rows: wallCache.rows.slice(0, limit) };
+  }
+  return { rows: (await refreshWall()).slice(0, limit) };
 }
 
 export async function getCheck(id: string) {

@@ -1,0 +1,45 @@
+.sound-toggle { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 50%; color: var(--gilt); background: transparent; cursor: pointer; }
+.sound-toggle:hover, .sound-toggle:focus-visible { border-color: var(--gilt); background: #c6a96b12; }
+.sound-toggle[aria-pressed="false"] { color: var(--faded); }
+
+.wall-main { max-width: 1160px; padding: 24px 32px 40px; }
+.wall-main h1 { font-size: clamp(40px, 5.8dvh, 48px); line-height: 1.12; margin: 0 0 12px; text-wrap: pretty; }
+.wall-intro { font-size: 16px; max-width: none; line-height: 1.5; margin: 0 0 12px; }
+.wall-main .mock-notice { font-size: 12px; line-height: 1.45; padding: 8px 12px; margin: 0 0 14px; }
+.wall-entries { margin: 16px 0 24px; }
+.wall-entries li { padding: 16px 0; }
+.wall-entries blockquote { font-size: 23px; line-height: 1.35; margin: 0 0 8px; }
+.wall-meta { gap: 4px 18px; font-size: 12px; line-height: 1.6; }
+.wall-meta a { color: var(--gilt); text-decoration: underline; text-underline-offset: 3px; }
+.wall-skeleton { margin: 16px 0 24px; }
+.wall-skeleton-row { padding: 18px 0; border-top: 1px solid var(--line); }
+.wall-skeleton-row span { display: block; background: var(--line); height: 26px; width: 84%; margin-bottom: 12px; animation: wallPulse 2s ease-in-out infinite alternate; }
+.wall-skeleton-row span + span { height: 14px; width: 58%; margin: 0; }
+@keyframes wallPulse { to { opacity: .4; } }
+
+.sounds-main { max-width: 1120px; padding: 32px; margin: auto; }
+.sounds-main h1 { font-size: 40px; margin: 0 0 16px; }
+.sounds-main > p { line-height: 1.5; }
+.sounds-main .mono { font-size: 12px; overflow-wrap: anywhere; }
+.sounds-main [role="status"] { min-height: 20px; margin-block: 12px; }
+.sound-events section { border-top: 1px solid var(--line); padding: 22px 0; }
+.sound-event-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; }
+.sound-event-heading h2 { font-size: 24px; margin: 0; flex: 1; }
+.sound-event-heading .button { padding: 10px 16px; }
+.sound-candidates { display: flex; flex-wrap: wrap; gap: 8px; }
+.sound-candidate { color: var(--gilt); border: 1px solid var(--line); background: transparent; min-height: 40px; padding: 8px 12px; cursor: pointer; }
+.sound-candidate:hover, .sound-candidate:focus-visible { border-color: var(--gilt); }
+@media (max-width: 760px) {
+  .site-header { padding-inline: 16px; gap: 8px; }
+  .site-header .brand { font-size: 22px; gap: 7px; }
+  .site-header .brand .sigil { width: 24px; height: 24px; }
+  .site-header .network { font-size: 12px; gap: 5px; letter-spacing: 0; }
+  .wall-nav { letter-spacing: 0; }
+  .wall-main { padding: 22px 20px 36px; }
+  .wall-main h1 { font-size: 34px; }
+  .wall-entries blockquote { font-size: 22px; }
+  .wall-meta { gap: 4px 14px; }
+  .sounds-main { padding: 24px 20px; }
+  .sound-event-heading { align-items: start; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) { .wall-skeleton-row span { animation: none; } }

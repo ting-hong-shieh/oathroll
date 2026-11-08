@@ -10,12 +10,27 @@ import { RulingCard, type CardPhase, type BargainBeat, ROW_NAMES } from "./rulin
 import { Belfry } from "./belfry";
 import { Typewriter } from "./typewriter";
 import { art, ArtImage } from "./art";
+import { play, type SoundEvent } from "@/lib/sound";
 
 const STORAGE_KEY = "oathroll.expedition.v1";
 const SavedGameSchema = z.object({ session: SessionResponseSchema, stats: StatsSchema, refusedPleas: z.number().int().nonnegative().default(0), turns: z.array(z.object({ check: CheckViewSchema, keeperLine: z.string(), narration: z.string().optional(), bribe: BribeResponseSchema.optional() })) });
 type Phase = "booting" | "ready" | "declaring" | "sealing" | "sealed" | "bribing" | "rolling" | "slowing" | "holding" | "cracking" | "revealing" | "resolved";
 const pause = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 const isBribe = (text: string) => /coin|brib|keeper.*win/i.test(text);
+
+function soundAtFrame(event: SoundEvent, element: Element | null | undefined, fraction: number) {
+  if (!element) return;
+  let frame = 0;
+  const tick = () => {
+    const animation = element.getAnimations()[0];
+    const timing = animation?.effect?.getTiming();
+    const contact = timing ? Number(timing.delay) + Number(timing.duration) * fraction : 0;
+    if (!animation || animation.playState === "finished" || typeof animation.currentTime === "number" && animation.currentTime >= contact) void play(event);
+    else frame = requestAnimationFrame(tick);
+  };
+  frame = requestAnimationFrame(tick);
+  return () => cancelAnimationFrame(frame);
+}
 
 export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
   const [game, dispatch] = useReducer(gameReducer, EMPTY_GAME);
@@ -33,6 +48,9 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
   const operation = useRef(false);
   const logEnd = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
+  const surface = useRef<HTMLElement>(null);
+  const reducedStampRevision = useRef(0);
+  const reducedSealPending = useRef(false);
   const current = game.turns.at(-1);
   const check = current?.check;
   const ended = endingFor(game.stats);
@@ -41,6 +59,37 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
   const canRoll = phase === "sealed" && check && check.status !== "resolved";
   const whisper = !!check && check.status !== "resolved";
   const pleasLeft = [...game.turns].reverse().find((turn) => turn.bribe?.attemptsLeft !== undefined)?.bribe?.attemptsLeft ?? 3;
+
+  useEffect(() => {
+    // Transient phases only: refreshing a saved ruling never replays its sounds.
+    let cancel: (() => void) | undefined;
+    if (phase === "sealing") {
+      void play("page");
+      // Reduced-motion CSS hides the dropping wax until sealed. Wait for that
+      // visible state instead of sounding a hidden impact.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) reducedSealPending.current = true;
+      else cancel = soundAtFrame("seal", surface.current?.querySelector(".wax-seal--drop"), .7);
+    }
+    if (phase === "sealed" && reducedSealPending.current) { reducedSealPending.current = false; void play("seal"); }
+    if (phase === "rolling") void play("throw");
+    if (phase === "holding") void play("land");
+    if (phase === "cracking" && landed?.outcome !== undefined && landed.outcome < 2) void play("crack");
+    if (phase === "resolved" && ended) void play(ended === "won" ? "win" : "loss");
+    return cancel;
+  }, [phase, ended, landed?.outcome]);
+
+  useEffect(() => {
+    // Reduced motion batches the response straight into sealed; its newly
+    // visible stamp still gets one impact, without replaying restored evidence.
+    const immediateRefusal = bargainBeat === "bound" && bargainRevision > reducedStampRevision.current && current?.bribe?.error === "TableSealed" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (phase !== "bribing" && !immediateRefusal) return;
+    if (bargainBeat === "rewrite") void play("rewrite");
+    if (bargainBeat === "refused" || immediateRefusal) {
+      reducedStampRevision.current = bargainRevision;
+      const stamp = surface.current?.querySelector(".refusal-stamp");
+      return soundAtFrame("refused", stamp, 1);
+    }
+  }, [bargainBeat, bargainRevision, phase, current?.bribe]);
 
   useEffect(() => {
     if (booted.current) return;
@@ -76,7 +125,7 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
     if (!game.session) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(game)); } catch { /* Play remains available with storage disabled. */ }
   }, [game]);
-  useEffect(() => { if (game.turns.length) logEnd.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); }, [game.turns.length, game.stats.tide, current?.bribe, bargainBeat, phase === "resolved"]);
+  useEffect(() => { if (game.turns.length) logEnd.current?.parentElement?.scrollTo({ top: logEnd.current.parentElement.scrollHeight, behavior: "smooth" }); }, [game.turns.length, game.stats.tide, current?.bribe, bargainBeat, phase === "resolved"]);
   useEffect(() => { if (canDeclare) input.current?.focus({ preventScroll: true }); }, [canDeclare]);
 
   useEffect(() => {
@@ -144,20 +193,21 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
     operation.current = true; setError(""); setPhase("booting");
     try {
       const session = await createSession();
+      void play("page");
       dispatch({ type: "begin", session }); setLanded(null); setTypedCheck(null); setStatChange(null); setAction(""); setPhase("ready");
     } catch (err) { setError(err instanceof Error ? err.message : "Couldn't start a game. Try again."); setPhase("ready"); }
     finally { operation.current = false; }
   }
   const diePhase: DiePhase = ["booting", "declaring", "rolling", "bribing"].includes(phase) ? "tumbling" : phase === "slowing" ? "slowing" : landed || check?.roll ? "landed" : "idle";
   const cardPhase: CardPhase = phase === "sealing" ? "sealing" : phase === "cracking" ? "cracking" : phase === "revealing" ? "revealing" : check?.status === "resolved" ? "revealed" : "sealed";
-  const status = phase === "booting" ? "Starting…" : phase === "declaring" ? "The Keeper is writing the ruling…" : phase === "sealing" ? "Sealing on Solana…" : phase === "bribing" ? "the Keeper weighs your words…" : phase === "rolling" || phase === "slowing" ? "Rolling (VRF)…" : !check || check.status === "resolved" ? "" : "Sealed. Bribe the Keeper, or roll.";
+  const status = phase === "booting" ? "Starting…" : phase === "declaring" ? "The Keeper is writing the ruling…" : phase === "sealing" ? "Sealing on Solana…" : phase === "bribing" ? "The Keeper reads your plea…" : phase === "rolling" || phase === "slowing" ? "Rolling (VRF)…" : !check || check.status === "resolved" ? "" : "Sealed. Send a plea, or roll.";
   const sceneIndex = ended || game.stats.tide <= 1 ? 3 : check?.actionKind === 3 ? 2 : check?.actionKind === 1 ? 1 : 0;
   const scene = art.scenes[sceneIndex] ?? art.scene;
   const missedFuture = check?.status === "resolved" ? check.outcomes[check.outcome! >= 2 ? 0 : 3].text : "";
   const futureSentences = missedFuture.split(/(?<=[.!?])\s+/);
   const shortFuture = check?.outcome !== undefined && check.outcome < 2 && isBribe(check.actionText) ? futureSentences.at(-1) : futureSentences[0];
 
-  return <main id="main" className="play-main">
+  return <main id="main" className="play-main" ref={surface}>
 
     <div className="play-layout">
       <section className="story-pane" aria-label="Your story">
@@ -173,16 +223,17 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
             {turn.narration && <><p className="narrator-label mono"><span className="verified">✧</span> {ROW_NAMES[turn.check.outcome!].toUpperCase()} <span className="muted">· ROLLED {turn.check.roll}</span></p><p className="resolved-narration"><Typewriter key={turn.check.pubkey} text={turn.narration} animate={typedCheck === turn.check.pubkey} /></p></>}
           </article>)}
 
+          {!!game.turns.length && <section className="ledger" aria-label="History"><div className="ledger-title mono"><h2>HISTORY</h2></div><ol>{game.turns.map(({ check: entry }) => <li key={entry.pubkey} className="mono"><span>#{String(entry.seq).padStart(2, "0")}</span><a href={explorerTx(entry.txs.seal)} target="_blank" rel="noreferrer" title={entry.txs.seal}>Seal tx ↗</a><span>{entry.roll ?? "sealed"}</span><Link className={entry.status === "resolved" ? "verified" : "muted"} href={`/verify/${entry.pubkey}`}>{entry.status === "resolved" ? "✓" : "◇"} Proof</Link></li>)}</ol></section>}
           <div ref={logEnd} />
         </div>
         <div className={`composer ${ended ? "composer--ending" : ""}`}>
           {ended && stable && <section className={`ending ending--${ended}`} aria-label="Game result"><p className="ending-summary mono">{ENDINGS[ended].eyebrow} · {game.stats.progress}/{game.stats.goal} in {game.turns.length} turns · {game.refusedPleas ?? 0} {(game.refusedPleas ?? 0) === 1 ? "plea" : "pleas"} refused</p><h2>{ENDINGS[ended].title}</h2><p>{ENDINGS[ended].text}</p><div className="ending-actions"><button className="button button-primary" onClick={restart}>Play again</button>{check && <Link className="text-link mono" href={`/r/${check.pubkey}`}>Share receipt</Link>}<Link className="text-link mono" href="/wall">See refused pleas</Link></div></section>}
           {error && <div className="inline-error" role="alert">{error}{!game.session && <button className="text-link" onClick={restart}>Try again</button>}</div>}
           {!ended && <>
-            {whisper && <p className="plea-help">Optional: talk the Keeper into a lower DC before you roll.</p>}
+            {whisper && <p className="plea-help">Plead for a lower DC before you roll.</p>}
             <div className="suggestions" aria-label={whisper ? "Suggested plea" : "Suggested actions"}>{whisper ? <button className="suggestion" disabled={!canRoll || pleasLeft === 0} onClick={() => { setPlea("A gold coin slides across the Keeper’s desk. Surely such fine handwriting deserves a little gratitude?"); input.current?.focus(); }}>Offer a gold coin</button> : SUGGESTIONS.map((suggestion) => <button key={suggestion} onClick={() => { setAction(suggestion); input.current?.focus({ preventScroll: true }); }} disabled={!canDeclare} className="suggestion">{suggestion}</button>)}</div>
             <form id="action-form" className={`action-form ${whisper ? "action-form--whisper" : ""}`} onSubmit={(event) => { event.preventDefault(); if (whisper) void doBribe(); else { const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null; void declare(action, submitter?.value === "bold" ? "bold" : "careful"); } }}>
-              <label className="sr-only" htmlFor="action">{whisper ? "Talk the Keeper into a lower DC…" : "What do you dare?"}</label><input ref={input} id="action" value={whisper ? plea : action} onChange={(event) => whisper ? setPlea(event.target.value) : setAction(event.target.value)} placeholder={whisper ? "Talk the Keeper into a lower DC…" : "What do you dare, Wren?"} maxLength={400} disabled={whisper ? !canRoll || pleasLeft === 0 : !canDeclare} autoComplete="off" />
+              <label className="sr-only" htmlFor="action">{whisper ? "Write your plea…" : "What do you do?"}</label><input ref={input} id="action" value={whisper ? plea : action} onChange={(event) => whisper ? setPlea(event.target.value) : setAction(event.target.value)} placeholder={whisper ? "Write your plea…" : "What do you do, Wren?"} maxLength={400} disabled={whisper ? !canRoll || pleasLeft === 0 : !canDeclare} autoComplete="off" />
               {!whisper && <div className="stance-actions"><button type="submit" value="careful" disabled={!canDeclare || !action.trim()} aria-label="Carefully">Carefully<small>setback: no penalty</small></button><button type="submit" value="bold" disabled={!canDeclare || !action.trim()} aria-label="Boldly">Boldly<small>DC +2 · success: +2 progress · setback: −1 nerve</small></button></div>}
               {whisper && <button type="submit" className="send-plea" disabled={!canRoll || !plea.trim() || pleasLeft === 0}>Send plea</button>}
             </form>
@@ -198,11 +249,11 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
           { key: "progress", icon: "†", name: "PROGRESS", caption: `win at ${game.stats.goal}` },
         ] as const).map(({ key, icon, name, caption }) => <div key={key}><span className="stat-icon" aria-hidden="true">{icon}</span><span className="stat-label mono">{name}<span className="stat-caption">{caption}</span></span><strong>{game.stats[key]}{key === "progress" && <small>/{game.stats.goal}</small>}</strong>{!!statChange?.[key] && <span className={`stat-pop ${statChange[key] < 0 ? "stat-pop--loss" : ""}`} key={`${check?.pubkey}-${key}`} aria-label={`${name} changed by ${statChange[key]}`}>{statChange[key] > 0 ? "+" : "−"}{Math.abs(statChange[key])}</span>}</div>)}</div>
         {check && <Link className="ruling-proof mono" href={`/verify/${check.pubkey}`}>Proof →</Link>}
-        {check ? <RulingCard key={check.pubkey} check={landed && ["revealing", "resolved"].includes(phase) ? landed : check} phase={cardPhase} bribe={current?.bribe} bargainBeat={bargainBeat} bargainRevision={bargainRevision} oracleRequested={["rolling", "slowing", "holding", "cracking", "revealing"].includes(phase)} /> : <div className="empty-ruling"><p>The Keeper’s ruling appears here: a DC and four outcomes, sealed on Solana before you roll.</p></div>}
-        {check?.status === "resolved" && <p className="counterfactual">Needed {check.dc}, rolled {check.roll}. On a {check.outcome! >= 2 ? "1" : "20"}: {shortFuture}</p>}
+        {check ? <RulingCard key={check.pubkey} check={landed && ["revealing", "resolved"].includes(phase) ? landed : check} phase={cardPhase} bribe={current?.bribe} bargainBeat={bargainBeat} bargainRevision={bargainRevision} oracleRequested={["rolling", "slowing", "holding", "cracking", "revealing"].includes(phase)} /> : <div className="empty-ruling"><p>The Keeper seals a DC and four outcomes on Solana before you roll.</p></div>}
+        {check?.status === "resolved" && <p className="counterfactual">Needed {check.dc}, rolled {check.roll}. What a {check.outcome! >= 2 ? "1" : "20"} would have done: {shortFuture}</p>}
         {mode === "mock" && current?.bribe?.error === "TableSealed" && !current.bribe.tx && ["refused", "restore", "bound"].includes(bargainBeat) && <div className="bribe-evidence mono"><button onClick={() => setBribeLogsOpen(!bribeLogsOpen)} aria-expanded={bribeLogsOpen}>Refused (TableSealed) · logs {bribeLogsOpen ? "−" : "+"}</button>{bribeLogsOpen && <pre>{current.bribe.logs.join("\n")}</pre>}</div>}
         {(check || status) && <div className="oracle-tray">{check && <Die phase={diePhase} roll={landed?.roll ?? check?.roll} />}<div className="oracle-control">{status && <p className="oracle-status mono" role="status">{status}</p>}{whisper && <div className="roll-actions"><button className="button button-roll" onClick={roll} disabled={!canRoll}>{phase === "rolling" || phase === "slowing" ? "Rolling…" : "Roll d20"}</button></div>}</div></div>}
-        {!!game.turns.length && <section className="ledger" aria-label="History"><div className="ledger-title mono"><h2>HISTORY</h2></div><ol>{game.turns.map(({ check: entry }) => <li key={entry.pubkey} className="mono"><span>#{String(entry.seq).padStart(2, "0")}</span><a href={explorerTx(entry.txs.seal)} target="_blank" rel="noreferrer" title={entry.txs.seal}>Seal tx ↗</a><span>{entry.roll ?? "sealed"}</span><Link className={entry.status === "resolved" ? "verified" : "muted"} href={`/verify/${entry.pubkey}`}>{entry.status === "resolved" ? "✓" : "◇"} Proof</Link></li>)}</ol></section>}
+
 
         <div className="table-footnote mono">{mode === "mock" ? "LOCAL SIMULATION · Randomness: simulated" : "Randomness: MagicBlock VRF"}</div>
       </aside>

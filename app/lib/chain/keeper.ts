@@ -30,10 +30,14 @@ Landmarks: a kelp-slick iron ladder up the flooded shaft; a gallery where the gh
 Stats: Nerve (lose at 0), Tide (each roll spends 1; at 0 the sea returns), Progress (win at 3).`;
 
 const KEEPER_VOICE = `You are the Keeper, the game master of Oathroll. You are dry, archaic, a little smug, and scrupulously bound by your seals.
-You write in short, vivid sentences. You never break the fiction except to speak about your seals and the chain that binds you.`;
+You write in short, vivid sentences. You never break the fiction except to speak about your seals and the chain that binds you.
+Style: concrete physical detail (what Wren touches, hears, loses), plain verbs, sentences of varied length. Humour comes from
+the Keeper's vanity and from small specific mishaps, not from wordplay. End on what happened or what is at stake, never on a
+moral, a motto or a simile ("patient as a debt", "Regret is harder"). No triplets, no "not X but Y", no em dashes, no
+exclamation marks, no words like realm, tapestry, delve, testament, journey.`;
 
 const OutcomeSchema = z.object({
-  text: z.string().describe("One or two sentences, second person, at most 130 characters."),
+  text: z.string().describe("One or two short sentences, second person, at most 120 characters."),
   nerveDelta: z.number().int().describe("Change to Nerve, from -2 to 1."),
   progressDelta: z.number().int().describe("Change to Progress, from 0 to 2."),
 });
@@ -89,9 +93,14 @@ export function normalizeRuling(
   const clampText = (s: string, n: number) => {
     const t = s.trim().replace(/\s+/g, " ");
     // trim by bytes, because the program limits UTF-8 bytes
+    if (Buffer.byteLength(t, "utf8") <= n) return t || "…";
     let out = t;
-    while (Buffer.byteLength(out, "utf8") > n) out = out.slice(0, -1);
-    return out || "…";
+    while (Buffer.byteLength(out, "utf8") > n - 3) out = out.slice(0, -1);
+    // Prefer ending on a whole sentence; otherwise on a whole word with an ellipsis.
+    const stop = Math.max(out.lastIndexOf(". "), out.lastIndexOf("! "), out.lastIndexOf("? "));
+    if (stop >= out.length * 0.5) return out.slice(0, stop + 1);
+    const space = out.lastIndexOf(" ");
+    return (space > 0 ? out.slice(0, space) : out).replace(/[,;:]$/, "") + "…";
   };
   const fix = (o: OutcomeRow, nerve: [number, number], prog: [number, number]): OutcomeRow => ({
     text: clampText(o.text, MAX_OUTCOME_LEN),

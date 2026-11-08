@@ -54,7 +54,7 @@ Mock rulings clamp the base DC to `[band low, band high − 2]` before applying 
 
 ## Art and covers
 
-`scripts/sync-art.mjs` copies the supplied hero / scene / Keeper / vellum art and approved Blender intact / cracked wax into `public/art/`. Source art is read only. All lettering is drawn by code; no generated lettering or new image service calls are used. Fraunces italics are synthesized from the local upright variable font. Font licenses are in `public/fonts/` and `CREDITS-FONTS.md`.
+`scripts/sync-art.mjs` copies the supplied hero / scene / Keeper / vellum art and approved Blender intact / cracked wax into `public/art/`. Source art is read only. All lettering is drawn by code; no generated lettering or new image service calls are used. The game uses selectable Google Fonts pairings, self-hosted by `next/font/google`; display italics use their own face where available. Append `?type=fraunces`, `?type=garamond`, `?type=newsreader` or `?type=sora` to any page. The choice persists as `oathroll-type` in browser storage. Font licenses are in `public/fonts/` and `CREDITS-FONTS.md`. The local Fraunces/Plex TTF files are retained for cover generation.
 
 ```sh
 # After a mock production build; launches and stops its own local server:
@@ -81,3 +81,15 @@ OATHROLL_MOCK=1 node scripts/select-backend.mjs
 Set `PLAYWRIGHT_EXECUTABLE_PATH` to an installed Chromium when the Playwright-managed version is absent. `OATHROLL_TEST_URL` changes the smoke host; `OATHROLL_SCREENSHOTS` changes its output directory. The final reviewed captures are in ignored `test-results/core-pitch/`, including exact viewport captures and full-page companions.
 
 Seven unit tests cover all table kinds and bands, stance mechanics, plea limits across turns, no-send scorn, persisted wall / proof logs, immutable refusals, d20 precedence, stats / endings, pure reducer behavior, sigils, and proof tampering. The browser smoke checks tempted / untempted flows, rewrite / stamp / restore, three-plea cap, bold and careful Enter, wall / empty state / proof logs, roll idempotency, proof failure behavior, receipt fit, browser restore, endings / restart, evidence sizes and contrast, desktop / mobile overflow, reduced motion, and runtime errors.
+
+## Sound
+
+The header’s Sound on / Sound off button stores `oathroll-sound`. Audio starts after a pointer or keyboard gesture on the title or play screen. Proof, receipt and wall pages stay silent. There is no music. Night sea is synthesised brown noise, low-passed at 550 Hz, with an eight-second swell and a very distant bell every 40–90 seconds. Events duck it by 6 dB.
+
+Open `/sounds` directly to compare every supplied candidate, the chosen mappings and ambience. This route is unlinked and noindex. Change the `files` on one line of `SOUND_MAP` in `lib/sound.ts` to remap an event; `db` and `rate` set its mix. Empty files means silence; rewrite uses a synthesised pen scratch unless a file is chosen. Candidates play at their event’s level. Main impacts target −12 to −9 dBFS; secondary sounds and bells sit lower. Listen on speakers and headphones before finalising the guesses.
+
+Sound effects: Kenney (kenney.nl), Impact Sounds, Casino Audio and RPG Audio, CC0 1.0. All 58 candidates and their original licenses are bundled under `public/sfx/` for auditioning; the full filename list is [public/sfx/CREDITS.txt](public/sfx/CREDITS.txt). Ogg originals retain Kenney’s names; AAC copies are 96 kb/s and selected through `canPlayType` when Vorbis is unavailable. `node scripts/prepare-sfx.mjs` recreates assets using local ffmpeg or the imageio-ffmpeg binary; `SFX_FFMPEG` may select a converter explicitly. Without a converter it records Ogg-only availability in `public/sfx/formats.json`.
+
+The requested append to the sibling art credits was blocked by the workspace’s read-only filesystem boundary. Its exact content is ready in [art/sound-credits-append.md](art/sound-credits-append.md).
+
+`scripts/check-sound.mjs` exercises actual Web Audio against mock mode: gesture gating, event timing, ducking, one ending bell, mute persistence, storage denial, silent evidence routes, Ogg/AAC decode and audition controls. `scripts/check-fit.mjs` now includes wall skeleton/list captures and checks three pleas in the first desktop screen at all six viewports and all four font pairings. Set `OATHROLL_FIT_WALL_ONLY=1` for the wall-only matrix.

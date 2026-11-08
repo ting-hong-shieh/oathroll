@@ -18,9 +18,9 @@ export function applyOutcome(stats: Stats, outcome: CheckView["outcomes"][number
   return { ...stats, nerve: Math.max(0, stats.nerve + outcome.nerveDelta), tide: Math.max(0, stats.tide - 1), progress: Math.min(stats.goal, Math.max(0, stats.progress + outcome.progressDelta)) };
 }
 export const ENDINGS = {
-  won: { eyebrow: "You won", title: "The bell has lost its voice.", text: "You emerge from Saltmere with the silver clapper beneath your coat. Behind you, the drowned belfry keeps its first honest silence. Even the Keeper must concede: well stolen." },
-  nerve: { eyebrow: "Out of nerve", title: "Some debts are paid in courage.", text: "Your hands will no longer close around the ladder. You leave the silver where it hangs and descend into the shallows. Saltmere keeps its due." },
-  tide: { eyebrow: "Out of turns", title: "Low tide makes no promises.", text: "The sea climbs the stairs faster than you can. You turn for shore, empty-handed, as the bell tolls beneath the water." },
+  won: { eyebrow: "You won", title: "The bell has lost its voice.", text: "You emerge from Saltmere with the silver clapper beneath your coat. Behind you, the drowned belfry falls silent. Even the Keeper concedes the theft." },
+  nerve: { eyebrow: "Out of nerve", title: "Your nerve gives out.", text: "Your hands will no longer close around the ladder. You leave the silver where it hangs and retreat into the shallows." },
+  tide: { eyebrow: "Out of turns", title: "The tide returns.", text: "The sea climbs the stairs faster than you can. You turn for shore, empty-handed, as the bell tolls beneath the water." },
 };
 export const SUGGESTIONS = ["Climb the kelp-slick ladder", "Sweet-talk the bell-ringer’s ghost", "Sneak around the broken stair", "Pry the silver clapper loose"];
 

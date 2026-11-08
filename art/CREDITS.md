@@ -104,3 +104,68 @@ Use case: stylized-concept. Asset type: seamless square 1024x1024 vellum parchme
 - generated/vellum_tiling_check.png and final/vellum_tiling_check.webp: 2×2 repeat proof from vellum_tile, each tile downscaled to 384×384.
 - All ten final/*.webp images: same-base-name PNG sources, quality 82, method 6.
 - Full size/byte inventory: manifest.json.
+
+## Sound effects
+
+Sound effects: Kenney (kenney.nl), Impact Sounds, Casino Audio and RPG Audio, CC0 1.0
+
+All 58 supplied candidates are included for /sounds. Game mappings: lib/sound.ts.
+Files (AAC copies use the same basename):
+- bookClose.ogg
+- bookFlip1.ogg
+- bookFlip2.ogg
+- bookFlip3.ogg
+- bookOpen.ogg
+- bookPlace1.ogg
+- bookPlace2.ogg
+- bookPlace3.ogg
+- cloth1.ogg
+- cloth2.ogg
+- cloth3.ogg
+- cloth4.ogg
+- creak1.ogg
+- creak2.ogg
+- creak3.ogg
+- dice-grab-1.ogg
+- dice-grab-2.ogg
+- dice-shake-1.ogg
+- dice-shake-2.ogg
+- dice-shake-3.ogg
+- dice-throw-1.ogg
+- dice-throw-2.ogg
+- dice-throw-3.ogg
+- die-throw-1.ogg
+- die-throw-2.ogg
+- die-throw-3.ogg
+- die-throw-4.ogg
+- drawKnife1.ogg
+- drawKnife2.ogg
+- drawKnife3.ogg
+- impactBell_heavy_000.ogg
+- impactBell_heavy_001.ogg
+- impactBell_heavy_002.ogg
+- impactBell_heavy_003.ogg
+- impactBell_heavy_004.ogg
+- impactGlass_light_000.ogg
+- impactGlass_light_001.ogg
+- impactGlass_light_002.ogg
+- impactPlank_medium_000.ogg
+- impactPlank_medium_001.ogg
+- impactPlank_medium_002.ogg
+- impactSoft_heavy_000.ogg
+- impactSoft_heavy_001.ogg
+- impactSoft_heavy_002.ogg
+- impactSoft_heavy_003.ogg
+- impactSoft_heavy_004.ogg
+- impactSoft_medium_000.ogg
+- impactSoft_medium_001.ogg
+- impactSoft_medium_002.ogg
+- impactWood_heavy_000.ogg
+- impactWood_heavy_001.ogg
+- impactWood_heavy_002.ogg
+- impactWood_heavy_003.ogg
+- impactWood_heavy_004.ogg
+- impactWood_light_000.ogg
+- impactWood_light_001.ogg
+- impactWood_light_002.ogg
+- metalClick.ogg

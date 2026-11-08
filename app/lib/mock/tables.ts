@@ -9,13 +9,13 @@ export function rulingFor(action: string): Table {
     outcomes: [
       row("The coin falls through the ghost of your hand. The bell tolls your name, twice. You wish it had not learned it.", -2, 0),
       row("The Keeper pockets your coin. The ruling stays sealed. In the silence, the tide climbs another stair.", -1, 0),
-      row("Amused by your nerve, the ghost points out a passage to the bell chamber. A fair advantage, fairly won.", 0, 1),
-      row("The bribe fails. Your audacity does not. The ghost laughs for the first time in a century and carries you straight to the clapper.", 1, 2),
+      row("Amused by your nerve, the ghost points out a passage to the bell chamber.", 0, 1),
+      row("The ghost laughs at your audacity and carries you straight to the silver clapper.", 1, 2),
     ],
   };
   if (/ladder|climb|kelp/i.test(action)) return {
     actionKind: 0, dc: 10, band: [6, 12],
-    keeperLine: "A ladder is merely a series of small promises. I would not trust these particular promises.",
+    keeperLine: "Those rungs have soaked for decades. Test each one before you trust it.",
     outcomes: [
       row("A rung parts beneath you. Black water swallows your cry. You catch a hanging chain, but leave a little courage in the deep.", -2, 0),
       row("The kelp gives way under your boot. You cling to the ladder until your hands stop shaking. The sea is one step closer.", -1, 0),
@@ -35,7 +35,7 @@ export function rulingFor(action: string): Table {
   };
   if (/pry|clapper|force|break/i.test(action)) return {
     actionKind: 3, dc: 13, band: [10, 16],
-    keeperLine: "Silver is soft. Regret is harder. Choose your fulcrum accordingly.",
+    keeperLine: "That clapper was hung to stay. Mind your fingers.",
     outcomes: [
       row("The bell swings into your shoulder. Its voiceless peal travels through your bones. Your tool vanishes into the dark below.", -2, 0),
       row("The pin will not yield. You prise until your hands bleed, gaining only a sliver of silver and a borrowed moment.", -1, 0),
