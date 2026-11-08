@@ -67,6 +67,7 @@ It does not guarantee:
 - **Liveness.** The server holds the Keeper key and pays fees. It could stop before requesting a roll. It cannot quietly re-draft that check, because the open check blocks new ones, but it can abandon the session.
 - **Privacy.** The table is plain text on-chain, readable before the roll. That is intentional: there is nothing hidden to reveal later.
 - **Oracle trust.** Randomness comes from MagicBlock VRF on devnet; Oathroll inherits its trust assumptions.
+- **Frozen code.** The program's upgrade authority is still held by the developer on devnet, so whoever holds that key could deploy different rules. The guarantees above hold for the deployed code; revoking the authority would make them permanent.
 
 ## Stances
 
