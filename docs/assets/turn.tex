@@ -1,0 +1,34 @@
+\documentclass[border=3mm]{standalone}
+\input{figstyle.tex}
+\newcommand{\column}[5]{%
+  \fill[#2!6,rounded corners=3mm] (#1,0) rectangle ++(\colw,-100mm);
+  \fill[#3,rounded corners=3mm] (#1,0) rectangle ++(\colw,-18mm);
+  \node[anchor=north west,text=white,font=\fontsize{25}{29}\selectfont\bfseries,align=left] at ($(#1,0)+(3mm,-3mm)$) {#4\hspace{2mm}#5};}
+\begin{document}
+\begin{tikzpicture}
+\column{0mm}{navy}{navy}{1}{Seal}
+\column{68mm}{oiverm}{oiverm!75!black}{2}{Plea}
+\column{136mm}{oiblue}{oiblue}{3}{Request}
+\column{204mm}{oigreen}{oigreen!65!black}{4}{Callback}
+\column{272mm}{navy}{navy}{5}{Verify}
+\node[card=navy] (draft) at (2mm,-22mm) {\cardtext{navy}{\cardicon}{Ruling}{DC + four\\outcomes}};
+\node[card=navy] (seal) at (2mm,-62mm) {\cardtext{navy}{\sealicon}{Seal}{Table\\frozen}};
+\node[card=oiverm] (plea) at (70mm,-22mm) {\cardtext{oiverm}{\cardicon}{Keeper}{Agrees to\\lower DC}};
+\node[card=oiverm] (refusal) at (70mm,-62mm) {\cardtext{oiverm}{\faBan}{TableSealed}{Plea stays\\in the logs}};
+\node[card=oiblue] (request) at (138mm,-22mm) {\cardtext{oiblue}{\cardicon}{Request}{Scoped to\\this check}};
+\node[card=oiblue] (once) at (138mm,-62mm) {\cardtext{oiblue}{\sealicon}{One roll}{Only once\\per check}};
+\node[card=oigreen] (callback) at (206mm,-22mm) {\cardtext{oigreen}{\cardicon}{Callback}{VRF sends\\randomness}};
+\node[card=oigreen] (resolve) at (206mm,-62mm) {\cardtext{oigreen}{\sealicon}{Resolve}{d20 picks\\the row}};
+\node[card=navy] (rpc) at (274mm,-22mm) {\cardtext{navy}{\cardicon}{RPC reads}{Check and\\TX records}};
+\node[card=navy] (verify) at (274mm,-62mm) {\cardtext{navy}{\sealicon}{Re-check}{Seal, VRF\\and d20}};
+\foreach \p/\q in {draft/seal,request/once,callback/resolve,rpc/verify}{\draw[link] ([yshift=-1mm]\p.south)--([yshift=1mm]\q.north);}
+% The main path bypasses the optional plea. The refusal never rejoins it.
+\draw[link] (seal.east) -- ++(3mm,0) |- (135mm,-106mm) |- (request.west);
+\draw[link,dashed] ([yshift=6mm]seal.east) -- ++(5mm,0) |- (plea.west);
+\draw[link,dashed] ([yshift=-1mm]plea.south) -- ([yshift=1mm]refusal.north);
+\draw[link] (request.east) -- (callback.west);
+\draw[link] (resolve.east) -- ++(3mm,0) |- (rpc.west);
+\fill[black!4,rounded corners=1mm] (0,-113mm) rectangle (334mm,-125mm);
+\node[anchor=west,font=\figlegend,text=grey] at (3mm,-119mm) {Solid = turn path.\quad Dashed = optional plea, refused.};
+\end{tikzpicture}
+\end{document}

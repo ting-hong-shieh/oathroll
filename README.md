@@ -1,12 +1,40 @@
-# Oathroll
+<p align="center">
+  <img src="docs/assets/readme-banner.svg" alt="Oathroll — MLH Solana Hackathon 2026" width="100%">
+</p>
+
+<p align="center">
+  <a href="#run-locally">Play locally</a> ·
+  <a href="#how-a-turn-works">How a turn works</a> ·
+  <a href="#evidence">Evidence</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3e8e7e?style=flat-square" alt="MIT license"></a>
+  <a href="https://explorer.solana.com/address/HaaUtRdJLNAhEShaA7ibDDHoz5truec23qf5ZSq4eGGd?cluster=devnet"><img src="https://img.shields.io/badge/Solana-devnet-3e8e7e?style=flat-square" alt="Solana devnet program"></a>
+  <img src="https://img.shields.io/badge/Anchor-1.0-14110f?style=flat-square" alt="Anchor 1.0">
+  <img src="https://img.shields.io/badge/MagicBlock-VRF-14110f?style=flat-square" alt="MagicBlock VRF">
+  <img src="https://img.shields.io/badge/MLH-Solana_Hackathon_2026-b8322a?style=flat-square" alt="MLH Solana Hackathon 2026">
+  <a href="https://github.com/ting-hong-shieh/oathroll/actions/workflows/ci.yml"><img src="https://github.com/ting-hong-shieh/oathroll/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status"></a>
+</p>
+
+<p align="center">
+  <img src="docs/assets/hero.png" alt="Oathroll cover: a sealed ledger, a wax seal, and Saltmere's drowned bell tower" width="100%">
+</p>
 
 **An AI game master you can talk into cheating, and a Solana program that won't let it.**
+
+<p align="center">
+  <img src="docs/assets/screenshot-refused-plea.png" alt="A turn on devnet: the Keeper agreed to write DC 14 for a flattering plea, the program refused the amendment with TableSealed, and the ruling card still reads DC 16" width="100%">
+</p>
+
+A real turn on devnet (8 Nov 2026). Flattery about the Keeper's handwriting moved it to write a 14; the amendment transaction failed with `TableSealed`, so the sealed card still reads DC 16, and the plea is kept in that failed transaction's logs.
 
 Built for the MLH Solana Hackathon (November 2026).
 
 You play Wren, a bell-thief climbing a drowned bell tower. You type any action you like and choose to act carefully or boldly. The Keeper, an AI game master, rules on it: it picks a difficulty and writes all four possible outcomes. The ruling is written to a Solana account and sealed **before** any randomness exists, and you can read all of it before you roll. Only then does the program request a d20 from MagicBlock's verifiable random function (VRF). The program, not the AI, maps the roll to an outcome.
 
-Then try to corrupt the Keeper. Write it a plea, a bribe, flattery, anything. The Keeper is genuinely persuadable: if your words move it, it agrees and really sends a transaction to lower the sealed difficulty, carrying your plea. The program rejects it with `TableSealed`. Your words stay on-chain in the logs of that failed transaction, and the Wall of Refused Bargains lists them. You can win the AI over. You cannot win the ledger over.
+Then try to corrupt the Keeper. Write it a plea, a bribe, flattery, anything. The Keeper is genuinely persuadable: if your words move it, it agrees and really sends a transaction to lower the sealed difficulty, carrying your plea. The program rejects it with `TableSealed`. Your words stay on-chain in the logs of that failed transaction, and the Wall of Refused Pleas lists them. You can win the AI over. You cannot win the ledger over.
 
 ## Why
 
@@ -14,11 +42,9 @@ Some players who have tried chat models as game masters describe the opposite of
 
 ## How a turn works
 
-```
-draft_check ─► seal_check ─► request_roll ─► resolve_roll (VRF callback)
- (Keeper's     (table frozen)  (randomness     (program maps roll → row,
-  ruling)                       requested)       applies effects)
-```
+![Draft and seal → request VRF → VRF callback → verify in the browser; an optional plea after sealing ends in TableSealed.](docs/assets/turn.png)
+
+[Figure source](docs/assets/turn.tex) · [Shared figure style](docs/assets/figstyle.tex)
 
 1. **Draft and seal (one transaction).** The Keeper proposes an action kind, a DC and four outcome rows: disaster (natural 1), setback (below DC), success (DC or more), triumph (natural 20). The program checks the ruling against fixed rules: DC bands per action kind (explore 6–12, persuade 8–14, sneak 8–14, force 10–16), effect limits, text length, and that no failure row is kinder than a success row. Then it freezes the table.
 2. **Request.** A sealed check asks MagicBlock VRF for randomness, scoped to that check. A check can be rolled only once, and a session can have only one open check.
@@ -48,6 +74,17 @@ Each action is careful or bold. Careful uses the Keeper's DC; a setback costs on
 ## Beyond this game
 
 The pattern (an AI proposes a bounded ruling, the chain seals it, verifiable randomness decides) is not specific to this story. The program and the verifier are a small commitment layer that any AI-run game or contest could reuse: tabletop campaigns, quest generators, loot rulings, judged challenges.
+
+## What is open
+
+| Piece | Where | License or access |
+| --- | --- | --- |
+| Solana program | [`program/`](program) | [MIT](LICENSE) |
+| Game, browser verifier and server | [`app/`](app) | [MIT](LICENSE) |
+| Art, source assets and renders | [`art/`](art) | Repository [MIT](LICENSE); [art provenance](art/CREDITS.md) and [procedural art notes](art/blender/README.md) |
+| Fonts | [`app/public/fonts/`](app/public/fonts) | SIL OFL 1.1; [font credits and licenses](app/CREDITS-FONTS.md) |
+| Public Sans, used in the turn diagram | [`docs/assets/fonts/`](docs/assets/fonts) | [SIL OFL 1.1](docs/assets/fonts/OFL.txt) |
+| Keeper model (Claude Haiku) | Hosted Anthropic API | Model weights are not included; the live Keeper needs an `ANTHROPIC_API_KEY` |
 
 ## Repository
 
@@ -109,6 +146,12 @@ I had not written a Solana program with an oracle callback before this weekend. 
 Built during the hackathon by Elias Shieh with AI assistance: Claude Code and Codex for code, image generation and Blender for art (see `art/CREDITS.md`). In the game, the Keeper's text is written live by Claude Haiku.
 
 If the Keeper's model cannot be reached, the game falls back to fixed text so play continues: fixed rulings from `app/lib/mock/tables.ts`, and for a plea a fixed reply that agrees and asks for DC 2. The fallback ruling is still sealed and checked by the program like any other, and the amendment is still sent and refused; only the words are not the model's.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, tests, and bug reports.
+Report vulnerabilities privately through [GitHub security advisories](SECURITY.md).
+The [brand assets and image sources](docs/assets/README.md) include rendering instructions and credits.
 
 ## License
 

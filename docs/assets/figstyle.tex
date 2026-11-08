@@ -1,0 +1,32 @@
+% Shared figure palette and OFL font setup. Compile from docs/assets/.
+\usepackage{fontspec}
+\setmainfont{public-sans-regular.ttf}[Path=fonts/,BoldFont=public-sans-semibold.ttf]
+\setsansfont{public-sans-regular.ttf}[Path=fonts/,BoldFont=public-sans-semibold.ttf]
+\setmonofont{ibm-plex-mono.ttf}[Path=../../app/public/fonts/,Scale=MatchLowercase]
+\usepackage{xcolor,tikz,fontawesome5}
+\usetikzlibrary{positioning,calc,arrows.meta}
+\definecolor{ink}{HTML}{14110F}
+\definecolor{vellum}{HTML}{EDE3CF}
+\definecolor{vermilion}{HTML}{B8322A}
+\definecolor{verdigris}{HTML}{3E8E7E}
+\definecolor{gold}{HTML}{C9A24A}
+\definecolor{navy}{HTML}{1F3A5F}
+\definecolor{oiblue}{HTML}{0072B2}
+\definecolor{oigreen}{HTML}{009E73}
+\definecolor{oiverm}{HTML}{D55E00}
+\definecolor{grey}{HTML}{555555}
+\newlength{\colw}\setlength{\colw}{62mm}
+\newcommand{\figbody}{\fontsize{20}{25}\selectfont}
+\newcommand{\figtitle}{\fontsize{22}{26}\selectfont\bfseries}
+\newcommand{\figlegend}{\fontsize{16}{20}\selectfont}
+\newcommand{\cardtext}[4]{%
+  \begin{minipage}[c][29mm][t]{6mm}\vspace{1mm}\centering{\fontsize{16}{20}\selectfont\color{#1}#2}\end{minipage}\hspace{1mm}%
+  \begin{minipage}[c][29mm][t]{\dimexpr\colw-14mm\relax}\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000
+  \figbody\color{ink}
+  {\figtitle\strut #3}\par\vspace{1.5mm}
+  #4\par\end{minipage}}
+% The document and circle icons use code; TableSealed uses Font Awesome's ban glyph.
+\newcommand{\cardicon}{\tikz[baseline=-1mm]\draw[line width=1pt,rounded corners=.3mm] (0,0) rectangle (4mm,5mm);}
+\newcommand{\sealicon}{\tikz[baseline=-1mm]\draw[line width=1.2pt] (0,0) circle (2mm);}
+\tikzset{card/.style={draw=#1!55,fill=white,rounded corners=2mm,line width=.7pt,minimum width=\colw-4mm,minimum height=34mm,inner sep=1.5mm,anchor=north west},
+link/.style={-{Stealth[length=2.5mm,width=2.3mm]},line width=1.3pt,color=grey}}

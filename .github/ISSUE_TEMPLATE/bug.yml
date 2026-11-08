@@ -1,0 +1,46 @@
+name: Bug report
+description: Report a problem with play, a ruling, a refused plea, or verification.
+title: "[Bug]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the problem. Report vulnerabilities privately through the security link instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the action and stance, and the plea if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      options:
+        - Devnet
+        - Mock mode (local simulation)
+        - Local validator
+        - Unsure
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, OS, and commit
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs, screenshots, or transaction links
+      description: Include the check address if available. Remove keys, keypairs, and other secrets.

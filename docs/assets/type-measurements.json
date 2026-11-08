@@ -1,0 +1,41 @@
+[
+  {
+    "asset": "social-preview.png",
+    "text": "Oathroll",
+    "role": "title",
+    "weight": 600,
+    "size": 110,
+    "top": 200,
+    "bottom": 284,
+    "cap_height": 79,
+    "ink_height_at_1280": 84,
+    "at_640": 42.0,
+    "at_320": 21.0
+  },
+  {
+    "asset": "social-preview.png",
+    "text": "An AI game master you can talk into cheating,",
+    "role": "claim",
+    "weight": 400,
+    "size": 52,
+    "top": 316,
+    "bottom": 367,
+    "cap_height": 36,
+    "ink_height_at_1280": 51,
+    "at_640": 25.5,
+    "at_320": 12.75
+  },
+  {
+    "asset": "social-preview.png",
+    "text": "and a Solana program that won't let it.",
+    "role": "claim",
+    "weight": 400,
+    "size": 52,
+    "top": 383,
+    "bottom": 436,
+    "cap_height": 36,
+    "ink_height_at_1280": 53,
+    "at_640": 26.5,
+    "at_320": 13.25
+  }
+]
