@@ -57,6 +57,8 @@ html, body { width: 1920px; height: 1080px; background: transparent; overflow: h
 @keyframes rise2 { 0%, 10% { opacity: 0; transform: translateY(26px); } 19% { opacity: 1; transform: none; } 100% { opacity: 1; } }
 @keyframes rise3 { 0%, 18% { opacity: 0; transform: translateY(20px); } 27% { opacity: 1; transform: none; } 100% { opacity: 1; } }
 .url { font: 500 44px "Plex Mono"; color: var(--vellum); margin-top: 34px; }
+.pid { font: 400 30px "Plex Mono"; color: #c9bfa8; margin-top: 18px; letter-spacing: .01em; }
+.pid b { font-weight: 500; color: var(--gold); }
 .credits { position: absolute; left: 140px; bottom: 60px; font: 400 24px/1.6 "Plex Mono"; color: #a89f8c; letter-spacing: .02em; }
 
 /* ---------- callout: spotlight box + label with a notch (transparent overlay) ---------- */
@@ -92,7 +94,8 @@ if (kind === "title") {
   root.innerHTML = `<div class="card"><div class="art anim"></div><div class="shade"></div><div class="copy">
     <div class="word r1 anim">Oathroll<i>.</i></div>
     <div class="tag r2 anim">Running on Solana devnet.</div>
-    <div class="url r3 anim">github.com/ting-hong-shieh/oathroll</div></div>
+    <div class="url r3 anim">github.com/ting-hong-shieh/oathroll</div>
+    <div class="pid r3 anim"><b>Program</b> HaaUtRdJLNAhEShaA7ibDDHoz5truec23qf5ZSq4eGGd</div></div>
     <div class="credits r3 anim">Keeper: Claude Haiku · Randomness: MagicBlock VRF · Gameplay recorded on Solana devnet, 8 Nov 2026<br>Narration: ElevenLabs (synthetic voice) · Music: ACE-Step 1.5 · Sounds: Kenney (CC0)</div></div>`;
 } else if (kind === "callout") {
   const x = +q.get("x"), y = +q.get("y"), w = +q.get("w"), h = +q.get("h"), side = q.get("side") || "below";

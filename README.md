@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://mainpc001.tail10e7d6.ts.net/play"><b>▶ Play now in the browser</b></a> (devnet, no wallet) ·
-  <a href="https://youtu.be/Rb8yvJ0JmdQ"><b>Watch the demo (1:52)</b></a> ·
+  <a href="https://youtu.be/UbwzloyJ4c8"><b>Watch the demo (1:57)</b></a> ·
   <a href="#how-a-turn-works">How a turn works</a> ·
   <a href="#evidence">Evidence</a> ·
   <a href="#run-locally">Run locally</a>

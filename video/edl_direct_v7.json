@@ -1,0 +1,381 @@
+{
+ "note": "Showcase cut (v6). Segment times are seconds in each take.mp4. Overlay, zoom, VO and skit_sfx times are seconds inside the segment. Zoom centres are in 1920x1080 output pixels. freeze = a still of that take time held for dur. The Explorer visit (oneA/oneB/oneC) is trimmed: page loading and scrolling are cut, and a pill says so. v6: hold zooms 1.3x onto the ruling card; turn 3 is shown so progress visibly reaches 3/3; skipped turns are labelled. v7: the demand segment runs on until the Keeper's full refusal is readable and zooms onto it; the Explorer logs zoom to fill the frame and hold as one 7.2 s still (the screencast's width jitters at 2x); a 2 s still holds '4 of 4 checks passed'; the end card shows the program id.",
+ "music": {
+  "file": "/mnt/d/Data/oathroll-video/music/music_seed20261108.wav",
+  "start": 0.0,
+  "fade_out": 2.5
+ },
+ "vo_dir": "/mnt/d/Data/oathroll-video/vo_direct",
+ "segments": [
+  {
+   "id": "cold",
+   "take": "r2_take2",
+   "in": 32.0,
+   "out": 40.5,
+   "zoom": [
+    {
+     "from": 3.6,
+     "to": 9.0,
+     "z": 1.3,
+     "cx": 1300,
+     "cy": 470
+    }
+   ],
+   "vo": {
+    "N01": 0.3,
+    "N01b": 5.0
+   },
+   "vo_skit": {
+    "N01": 2.0,
+    "N01b": 6.2
+   },
+   "skit_zoom": [
+    {
+     "from": 2.7,
+     "to": 5.25,
+     "z": 1.55,
+     "cx": 965,
+     "cy": 770
+    }
+   ],
+   "skit_sfx": [
+    {
+     "t": 0.9,
+     "type": "slide"
+    },
+    {
+     "t": 1.75,
+     "type": "ding"
+    },
+    {
+     "t": 3.63,
+     "type": "scratch",
+     "dur": 1.4
+    },
+    {
+     "t": 5.25,
+     "type": "whoosh"
+    },
+    {
+     "t": 6.0,
+     "type": "clank"
+    },
+    {
+     "t": 7.3,
+     "type": "womp"
+    }
+   ]
+  },
+  {
+   "id": "logo",
+   "card": "logo",
+   "dur": 3.9,
+   "vo": {
+    "N02": 0.2
+   }
+  },
+  {
+   "id": "type",
+   "take": "r1_take2",
+   "in": 5.2,
+   "out": 15.8,
+   "vo": {
+    "N03": 0.4
+   },
+   "overlays": [
+    {
+     "card": "t1",
+     "at": 0.3
+    },
+    {
+     "card": "c_turns",
+     "at": 3.0
+    },
+    {
+     "card": "c_action",
+     "at": 5.4
+    }
+   ]
+  },
+  {
+   "id": "sealed",
+   "take": "r1_take2",
+   "in": 21.2,
+   "out": 23.4,
+   "vo": {
+    "N04": 0.0
+   }
+  },
+  {
+   "id": "hold",
+   "take": "r1_take2",
+   "freeze": 24.0,
+   "dur": 8.0,
+   "overlays": [
+    {
+     "card": "c_dc_z",
+     "at": 0.2
+    },
+    {
+     "card": "c_rows_z",
+     "at": 3.4
+    },
+    {
+     "card": "c_seal_z",
+     "at": 5.6
+    }
+   ],
+   "zoom_static": {
+    "z": 1.3,
+    "cx": 1360,
+    "cy": 560
+   }
+  },
+  {
+   "id": "demand",
+   "take": "r1_take2",
+   "in": 25.0,
+   "out": 32.6,
+   "vo": {
+    "N05": 0.5
+   },
+   "overlays": [
+    {
+     "card": "t2",
+     "at": 0.2
+    },
+    {
+     "card": "c_plead",
+     "at": 0.1
+    }
+   ],
+   "zoom": [
+    {
+     "from": 2.7,
+     "to": 99,
+     "z": 1.8,
+     "cx": 540,
+     "cy": 700
+    }
+   ]
+  },
+  {
+   "id": "oneA",
+   "take": "r1_take2",
+   "in": 38.6,
+   "out": 52.6,
+   "vo": {
+    "N06": 2.9,
+    "N07": 8.6
+   },
+   "zoom": [
+    {
+     "from": 5.8,
+     "to": 12.6,
+     "z": 1.35,
+     "cx": 1300,
+     "cy": 520
+    }
+   ]
+  },
+  {
+   "id": "oneB",
+   "take": "r1_take2",
+   "freeze": 60.0,
+   "dur": 7.2,
+   "overlays": [
+    {
+     "card": "p_exp",
+     "at": 0.0
+    },
+    {
+     "card": "t3",
+     "at": 0.3
+    }
+   ],
+   "zoom_static": {
+    "z": 2.0,
+    "cx": 1432,
+    "cy": 540
+   }
+  },
+  {
+   "id": "oneC",
+   "take": "r1_take2",
+   "in": 65.6,
+   "out": 69.4,
+   "zoom": [
+    {
+     "from": 0.6,
+     "to": 99,
+     "z": 1.35,
+     "cx": 1150,
+     "cy": 380
+    }
+   ]
+  },
+  {
+   "id": "roll",
+   "take": "r1_take2",
+   "in": 69.4,
+   "out": 82.0,
+   "vo": {
+    "N08": 0.7,
+    "N08b": 7.7
+   },
+   "overlays": [
+    {
+     "card": "c_roll",
+     "at": 0.0
+    },
+    {
+     "card": "t4",
+     "at": 1.9
+    }
+   ],
+   "zoom": [
+    {
+     "from": 6.8,
+     "to": 12.9,
+     "z": 1.6,
+     "cx": 1360,
+     "cy": 336
+    }
+   ]
+  },
+  {
+   "id": "callback",
+   "take": "r1_take2",
+   "in": 110.4,
+   "out": 113.6,
+   "overlays": [
+    {
+     "card": "p_cb",
+     "at": 0.0
+    }
+   ],
+   "zoom": [
+    {
+     "from": -1,
+     "to": 99,
+     "z": 1.45,
+     "cx": 1430,
+     "cy": 470
+    }
+   ]
+  },
+  {
+   "id": "proofA",
+   "take": "r1_take2",
+   "in": 83.0,
+   "out": 88.0,
+   "vo": {
+    "N09": 0.3
+   },
+   "overlays": [
+    {
+     "card": "t5",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "id": "proofhold",
+   "take": "r1_take2",
+   "freeze": 88.0,
+   "dur": 2.0,
+   "zoom_static": {
+    "z": 1.28,
+    "cx": 1390,
+    "cy": 480
+   }
+  },
+  {
+   "id": "proofB",
+   "take": "r1_take2",
+   "in": 88.0,
+   "out": 93.0
+  },
+  {
+   "id": "triumph",
+   "take": "r2_take2",
+   "in": 83.4,
+   "out": 88.4,
+   "overlays": [
+    {
+     "card": "t6",
+     "at": 0.2
+    },
+    {
+     "card": "p_t2",
+     "at": 0.3
+    }
+   ],
+   "zoom": [
+    {
+     "from": 2.3,
+     "to": 9.0,
+     "z": 1.8,
+     "cx": 1360,
+     "cy": 300
+    }
+   ]
+  },
+  {
+   "id": "turn3",
+   "take": "r2_take2",
+   "in": 113.4,
+   "out": 117.8,
+   "vo": {
+    "N10": 0.1
+   },
+   "overlays": [
+    {
+     "card": "p_t3",
+     "at": 0.1
+    }
+   ],
+   "zoom": [
+    {
+     "from": -1,
+     "to": 99,
+     "z": 1.8,
+     "cx": 1360,
+     "cy": 300
+    }
+   ]
+  },
+  {
+   "id": "won",
+   "take": "r2_take2",
+   "in": 121.4,
+   "out": 125.4,
+   "zoom": [
+    {
+     "from": -1,
+     "to": 99,
+     "z": 1.35,
+     "cx": 560,
+     "cy": 860
+    }
+   ]
+  },
+  {
+   "id": "wall",
+   "take": "wall_take1",
+   "in": 2.6,
+   "out": 8.0,
+   "vo": {
+    "N11": 0.5
+   }
+  },
+  {
+   "id": "end",
+   "card": "end",
+   "dur": 6.0,
+   "vo": {
+    "N12": 0.3
+   }
+  }
+ ]
+}

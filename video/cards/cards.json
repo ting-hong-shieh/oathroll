@@ -266,5 +266,13 @@
    "kind": "pill",
    "html": "turn 3 · <b>rolled 15 vs DC 10: +1 progress → 3/3</b>"
   }
+ },
+ {
+  "id": "p_real",
+  "dur": 2.2,
+  "params": {
+   "kind": "pill",
+   "html": "the real game · <b>Solana refuses the DC change</b>"
+  }
  }
 ]

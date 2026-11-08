@@ -62,3 +62,13 @@ Added files: `skit.py`, `skit-queue.py`, `skit-review.py`, `copy-skit.sh`,
 a review MP4, and timing/validation records. README and .gitignore were updated.
 Nothing was committed. The only delivery step blocked by this worker's filesystem
 is copying the staged sequence to the requested D: destination.
+
+## Polish pass (8 Nov 2026, v8 demo)
+
+`skit_polish.py` opens `skit.blend` and saves `skit_v2.blend` (ignored by Git) with a 7% eased push-in,
+depth of field on the ruling card (f/1.4), motion blur, two character rim lights, compositor bloom and
+128 adaptive samples with GPU denoising. It back-projects the original text quad onto the card plane
+(fit error 0.0 px) and re-exports per-frame quads for `video/skit_dc.py` under the new camera.
+Frames 40-300 rendered on partner001 (2070S, CUDA): 261 frames, 6.35 s/frame, 27.6 GPU minutes,
+peak 2413 MiB. The v8 edit (`video/edl_direct_v8.json`) uses frames 52-262 and then cuts to the same
+beat in the real game.

@@ -4,6 +4,8 @@ __pycache__/
 
 # Cold-open working scene and full-resolution sequence
 skit.blend
+skit_v2.blend
+renders/skit_v2/
 renders/skit/
 renders/skit-measure/
 renders/skit-preview/
