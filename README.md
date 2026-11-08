@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://mainpc001.tail10e7d6.ts.net/play"><b>Play now (devnet)</b></a> ·
   <a href="https://youtu.be/Rb8yvJ0JmdQ">Demo video (1:52)</a> ·
   <a href="#run-locally">Play locally</a> ·
   <a href="#how-a-turn-works">How a turn works</a> ·
@@ -32,6 +33,8 @@
 A real turn on devnet (8 Nov 2026). Flattery about the Keeper's handwriting moved it to write a 14; the amendment transaction failed with `TableSealed`, so the sealed card still reads DC 16, and the plea is kept in that failed transaction's logs.
 
 Built for the MLH Solana Hackathon (November 2026). Demo video: [youtu.be/Rb8yvJ0JmdQ](https://youtu.be/Rb8yvJ0JmdQ) (1:52, gameplay recorded on devnet).
+
+**Play in the browser:** [mainpc001.tail10e7d6.ts.net/play](https://mainpc001.tail10e7d6.ts.net/play). No wallet needed; the server's devnet Keeper pays the fees and the Keeper is Claude Haiku. This public table is open through 14 November 2026, with a per-visitor hourly limit and a daily budget, so it may answer "come back later". Refused pleas appear on the [Wall](https://mainpc001.tail10e7d6.ts.net/wall).
 
 You play Wren, a bell-thief climbing a drowned bell tower. You type any action you like and choose to act carefully or boldly. The Keeper, an AI game master, rules on it: it picks a difficulty and writes all four possible outcomes. The ruling is written to a Solana account and sealed **before** any randomness exists, and you can read all of it before you roll. Only then does the program request a d20 from MagicBlock's verifiable random function (VRF). The program, not the AI, maps the roll to an outcome.
 
