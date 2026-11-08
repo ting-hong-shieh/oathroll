@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: "Fraunces"; src: url("../../app/public/fonts/fraunces.ttf"); }
+@font-face { font-family: "Plex Mono"; src: url("../../app/public/fonts/ibm-plex-mono.ttf"); }
+:root { --ink: #14110f; --vellum: #ede3cf; --vermilion: #b8322a; --gold: #d4a64a; --verdigris: #3e8e7e; --t: 0; }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1920px; height: 1080px; background: transparent; overflow: hidden; }
+.anim { animation-play-state: paused !important; animation-fill-mode: both !important; }
+
+/* ---------- section title (transparent overlay, 2.6 s) ---------- */
+.title { position: absolute; right: 64px; bottom: 74px; display: flex; align-items: stretch;
+  filter: drop-shadow(0 10px 28px rgba(0,0,0,.45)); }
+.title .num { background: var(--ink); color: var(--gold); font: 500 30px "Plex Mono"; letter-spacing: .08em;
+  padding: 0 26px; display: flex; align-items: center; border: 3px solid var(--gold); border-right: 0;
+  border-radius: 18px 0 0 18px; animation: num 2.6s linear; animation-delay: calc(var(--t) * -1s); }
+.title .band { background: var(--vermilion); color: var(--vellum); font: italic 400 64px/1 "Fraunces";
+  padding: 26px 46px 30px 38px; border-radius: 0 18px 18px 0; letter-spacing: -.01em; white-space: nowrap;
+  clip-path: inset(0 0 0 0 round 0 18px 18px 0); animation: band 2.6s linear; animation-delay: calc(var(--t) * -1s); }
+@keyframes band {
+  0% { transform: translateX(60px); opacity: 0; clip-path: inset(0 100% 0 0); }
+  12% { transform: translateX(0); opacity: 1; clip-path: inset(0 0 0 0); }
+  86% { transform: translateX(0); opacity: 1; clip-path: inset(0 0 0 0); }
+  100% { transform: translateX(-30px); opacity: 0; clip-path: inset(0 0 0 0); }
+}
+@keyframes num {
+  0% { opacity: 0; transform: translateX(40px); } 9% { opacity: 1; transform: none; }
+  86% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(-30px); }
+}
+
+/* ---------- small label pill (transparent overlay) ---------- */
+.pill { position: absolute; left: 50%; top: 92px; transform: translateX(-50%); background: rgba(20,17,15,.9);
+  border: 2px solid var(--gold); color: var(--vellum); font: 500 30px "Plex Mono"; padding: 14px 28px; border-radius: 999px;
+  white-space: nowrap; animation: pill 4s linear; animation-delay: calc(var(--t) * -1s); }
+.pill b { color: var(--gold); font-weight: 500; }
+@keyframes pill { 0% { opacity: 0; margin-top: -16px; } 8% { opacity: 1; margin-top: 0; } 90% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ---------- full cards (logo, end) ---------- */
+.card { position: absolute; inset: 0; background: var(--ink); overflow: hidden; }
+.card .art { position: absolute; inset: -2%; background: url("../../art/generated/hero_B.png") center/cover;
+  animation: push 6s linear; animation-delay: calc(var(--t) * -1s); }
+.card .shade { position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(20,17,15,.95) 0%, rgba(20,17,15,.85) 14%, rgba(20,17,15,0) 30%), linear-gradient(90deg, rgba(20,17,15,.94) 0%, rgba(20,17,15,.78) 38%, rgba(20,17,15,.2) 70%, rgba(20,17,15,.35) 100%); }
+@keyframes push { from { transform: scale(1.0); } to { transform: scale(1.05); } }
+.card .copy { position: absolute; left: 140px; top: 50%; transform: translateY(-52%); }
+.word { font: 400 220px/0.95 "Fraunces"; color: #f3e9d2; letter-spacing: -.03em; }
+.word i { color: var(--vermilion); font-style: normal; }
+.tag { font: italic 400 64px/1.15 "Fraunces"; color: var(--gold); margin-top: 26px; }
+.kick { font: 500 30px "Plex Mono"; letter-spacing: .14em; color: #cfc4ad; text-transform: uppercase; margin-top: 46px; }
+.kick b { color: var(--gold); font-weight: 500; }
+.r1 { animation: rise 6s linear; animation-delay: calc(var(--t) * -1s); }
+.r2 { animation: rise2 6s linear; animation-delay: calc(var(--t) * -1s); }
+.r3 { animation: rise3 6s linear; animation-delay: calc(var(--t) * -1s); }
+@keyframes rise { 0% { opacity: 0; transform: translateY(40px) scale(.97); } 9% { opacity: 1; transform: none; } 100% { opacity: 1; } }
+@keyframes rise2 { 0%, 10% { opacity: 0; transform: translateY(26px); } 19% { opacity: 1; transform: none; } 100% { opacity: 1; } }
+@keyframes rise3 { 0%, 18% { opacity: 0; transform: translateY(20px); } 27% { opacity: 1; transform: none; } 100% { opacity: 1; } }
+.url { font: 500 44px "Plex Mono"; color: var(--vellum); margin-top: 34px; }
+.credits { position: absolute; left: 140px; bottom: 60px; font: 400 24px/1.6 "Plex Mono"; color: #a89f8c; letter-spacing: .02em; }
+
+/* ---------- callout: spotlight box + label with a notch (transparent overlay) ---------- */
+.co-box { position: absolute; border: 4px solid var(--gold); border-radius: 14px; }
+.co-label { position: absolute; background: var(--ink); border: 3px solid var(--gold); border-radius: 14px; color: #f3e9d2;
+  font: italic 400 44px/1.15 "Fraunces"; padding: 16px 28px 20px; white-space: nowrap; box-shadow: 0 12px 30px rgba(0,0,0,.5); }
+.co-label b { color: var(--gold); font-weight: 400; }
+.co-label::after { content: ""; position: absolute; width: 22px; height: 22px; background: var(--ink);
+  border: 3px solid var(--gold); transform: rotate(45deg); }
+.co-label.left::after { right: -14px; top: calc(50% - 11px); border-left: 0; border-bottom: 0; }
+.co-label.right::after { left: -14px; top: calc(50% - 11px); border-right: 0; border-top: 0; }
+.co-label.above::after { bottom: -14px; left: var(--nx, 60px); border-left: 0; border-top: 0; }
+.co-label.below::after { top: -14px; left: var(--nx, 60px); border-right: 0; border-bottom: 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const kind = q.get("kind");
+const root = document.getElementById("root");
+const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+if (kind === "title") {
+  root.innerHTML = `<div class="title"><div class="num anim">${esc(q.get("num") || "")}</div><div class="band anim">${esc(q.get("text"))}</div></div>`;
+} else if (kind === "pill") {
+  root.innerHTML = `<div class="pill anim">${q.get("html")}</div>`;
+} else if (kind === "logo") {
+  root.innerHTML = `<div class="card"><div class="art anim"></div><div class="shade"></div><div class="copy">
+    <div class="word r1 anim">Oathroll<i>.</i></div>
+    <div class="tag r2 anim">The AI can be bribed. Solana can’t.</div>
+    <div class="kick r3 anim"><b>MLH Solana Hackathon 2026</b> · built on Solana devnet</div></div></div>`;
+} else if (kind === "end") {
+  root.innerHTML = `<div class="card"><div class="art anim"></div><div class="shade"></div><div class="copy">
+    <div class="word r1 anim">Oathroll<i>.</i></div>
+    <div class="tag r2 anim">Running on Solana devnet.</div>
+    <div class="url r3 anim">github.com/ting-hong-shieh/oathroll</div></div>
+    <div class="credits r3 anim">Keeper: Claude Haiku · Randomness: MagicBlock VRF · Gameplay recorded on Solana devnet, 8 Nov 2026<br>Narration: ElevenLabs (synthetic voice) · Music: ACE-Step 1.5 · Sounds: Kenney (CC0)</div></div>`;
+} else if (kind === "callout") {
+  const x = +q.get("x"), y = +q.get("y"), w = +q.get("w"), h = +q.get("h"), side = q.get("side") || "below";
+  const dim = q.has("dim") ? +q.get("dim") : 0.55, gap = 30;
+  root.innerHTML = `<div class="co-box" id="cb"></div><div class="co-label ${side}" id="cl">${q.get("html")}</div>`;
+  const cb = document.getElementById("cb"), cl = document.getElementById("cl");
+  Object.assign(cb.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+  const lw = cl.offsetWidth, lh = cl.offsetHeight;
+  let lx, ly;
+  if (side === "left") { lx = x - gap - lw; ly = y + h / 2 - lh / 2; }
+  else if (side === "right") { lx = x + w + gap; ly = y + h / 2 - lh / 2; }
+  else if (side === "above") { lx = x + Math.min(40, w / 2 - 40); ly = y - gap - lh; }
+  else { lx = x + Math.min(40, w / 2 - 40); ly = y + h + gap; }
+  lx = Math.max(24, Math.min(1920 - 24 - lw, lx)); ly = Math.max(24, Math.min(1080 - 24 - lh, ly));
+  if (side === "above" || side === "below") cl.style.setProperty("--nx", Math.max(24, Math.min(lw - 50, x + Math.min(w / 2, 90) - lx - 11)) + "px");
+  Object.assign(cl.style, { left: lx + "px", top: ly + "px" });
+  const dur = +q.get("dur");
+  const dir = { left: [-1, 0], right: [1, 0], above: [0, -1], below: [0, 1] }[side];
+  window.seekCallout = (t) => {
+    const a = Math.min(1, Math.max(0, t / 0.3)), b = Math.min(1, Math.max(0, (dur - t) / 0.3));
+    const ea = 1 - Math.pow(1 - a, 3), env = Math.min(ea, b);
+    const glow = 0.5 + 0.5 * Math.sin(2 * Math.PI * t / 1.1);
+    cb.style.opacity = env; cb.style.transform = `scale(${1 + 0.18 * (1 - ea)})`;
+    cb.style.boxShadow = `0 0 0 4000px rgba(10,8,6,${dim * env}), 0 0 ${18 + 16 * glow}px ${4 + 4 * glow}px rgba(212,166,74,${0.55 * env})`;
+    const lb = Math.min(1, Math.max(0, (t - 0.12) / 0.3)), el = 1 - Math.pow(1 - lb, 3);
+    cl.style.opacity = Math.min(el, b); cl.style.transform = `translate(${dir[0] * 26 * (1 - el)}px, ${dir[1] * 26 * (1 - el)}px)`;
+  };
+  window.seekCallout(0);
+}
+window.seek = (t) => { document.documentElement.style.setProperty("--t", String(t)); if (window.seekCallout) window.seekCallout(t); };
+</script>
+</body>
+</html>

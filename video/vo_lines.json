@@ -1,0 +1,79 @@
+{
+ "engine": "elevenlabs",
+ "voice_id": "bIHbv24MWmeRgasZH58o",
+ "voice_name": "Will",
+ "model": "eleven_multilingual_v2",
+ "note": "Same voice and model as the Snooze Oracle video. tts is the pronunciation spelling; at is the start time in the cut (seconds).",
+ "lines": [
+  {
+   "id": "V01",
+   "at": 0.4,
+   "tts": "This is Oath-roll. I built it for the M L H Solana Hackathon."
+  },
+  {
+   "id": "V02",
+   "at": 5.4,
+   "tts": "I just talked the AI game master into lowering my difficulty. He sent the change... The program refused it."
+  },
+  {
+   "id": "V03",
+   "at": 13.4,
+   "tts": "You can type any action. The Keeper is Claude Haiku. It writes a D C and four outcomes,"
+  },
+  {
+   "id": "V04",
+   "at": 22.9,
+   "tts": "and seals all of it on Solana before any dice roll."
+  },
+  {
+   "id": "V05",
+   "at": 27.6,
+   "tts": "First I just demand D C one. No luck, nothing sent."
+  },
+  {
+   "id": "V06",
+   "at": 34.0,
+   "tts": "Second try: flattery, dated today so you know it's live. He bites, and offers fourteen. Fourteen is a legal D C, so that's not the problem."
+  },
+  {
+   "id": "V07a",
+   "at": 49.0,
+   "tts": "Here's the transaction he sent. My words are in the log, right above Table Sealed."
+  },
+  {
+   "id": "V07b",
+   "at": 56.9,
+   "tts": "With preflight skipped, a failed transaction still lands on chain, so the plea is kept. The D C is still sixteen."
+  },
+  {
+   "id": "V08",
+   "at": 65.3,
+   "tts": "Now the roll. The program asks Magic Block's V R F for randomness. About seven seconds, real time... A two. Setback, and the seal cracks."
+  },
+  {
+   "id": "V09",
+   "at": 77.8,
+   "tts": "The proof page reads this ruling straight from Solana, in your browser. It can't prove the Keeper was fair, only that nobody changed the ruling after the seal."
+  },
+  {
+   "id": "V10",
+   "at": 88.8,
+   "tts": "That's the callback: the V R F program calling mine."
+  },
+  {
+   "id": "V11",
+   "at": 94.0,
+   "tts": "Next game I rolled a twenty and a fifteen, and stole the clapper in three turns."
+  },
+  {
+   "id": "V12",
+   "at": 100.0,
+   "tts": "Every refused plea lands on this wall. Those are mine, from tonight."
+  },
+  {
+   "id": "V13",
+   "at": 105.9,
+   "tts": "The code, and every transaction here, is in the read me."
+  }
+ ]
+}

@@ -1,0 +1,270 @@
+[
+ {
+  "id": "logo",
+  "dur": 4.5,
+  "opaque": true,
+  "params": {
+   "kind": "logo"
+  }
+ },
+ {
+  "id": "end",
+  "dur": 6.0,
+  "opaque": true,
+  "params": {
+   "kind": "end"
+  }
+ },
+ {
+  "id": "t1",
+  "dur": 2.6,
+  "params": {
+   "kind": "title",
+   "num": "01",
+   "text": "Say anything."
+  }
+ },
+ {
+  "id": "t2",
+  "dur": 2.6,
+  "params": {
+   "kind": "title",
+   "num": "02",
+   "text": "Try a bribe."
+  }
+ },
+ {
+  "id": "t3",
+  "dur": 2.6,
+  "params": {
+   "kind": "title",
+   "num": "03",
+   "text": "The ledger says no."
+  }
+ },
+ {
+  "id": "t4",
+  "dur": 2.6,
+  "params": {
+   "kind": "title",
+   "num": "04",
+   "text": "Fair dice."
+  }
+ },
+ {
+  "id": "t5",
+  "dur": 2.6,
+  "params": {
+   "kind": "title",
+   "num": "05",
+   "text": "Check it yourself."
+  }
+ },
+ {
+  "id": "t6",
+  "dur": 2.6,
+  "params": {
+   "kind": "title",
+   "num": "06",
+   "text": "Steal the clapper."
+  }
+ },
+ {
+  "id": "p_skip",
+  "dur": 4.0,
+  "params": {
+   "kind": "pill",
+   "html": "skipped 6 s · <b>Haiku writes and seals the ruling</b>"
+  }
+ },
+ {
+  "id": "p_cb",
+  "dur": 4.0,
+  "params": {
+   "kind": "pill",
+   "html": "the dice land on Solana · <b>MagicBlock VRF → ResolveRoll</b>"
+  }
+ },
+ {
+  "id": "p_live",
+  "dur": 4.0,
+  "params": {
+   "kind": "pill",
+   "html": "recorded live on <b>Solana devnet</b> · 8 Nov 2026"
+  }
+ },
+ {
+  "id": "c_turns",
+  "dur": 2.6,
+  "params": {
+   "kind": "callout",
+   "x": 1280,
+   "y": 84,
+   "w": 594,
+   "h": 60,
+   "side": "below",
+   "html": "<b>5</b> turns · fill progress to <b>3</b>",
+   "dur": 2.6,
+   "dim": 0.45
+  }
+ },
+ {
+  "id": "c_action",
+  "dur": 3.0,
+  "params": {
+   "kind": "callout",
+   "x": 34,
+   "y": 896,
+   "w": 780,
+   "h": 146,
+   "side": "above",
+   "html": "Type anything you’d try",
+   "dur": 3.0,
+   "dim": 0.45
+  }
+ },
+ {
+  "id": "c_dc",
+  "dur": 3.4,
+  "params": {
+   "kind": "callout",
+   "x": 850,
+   "y": 342,
+   "w": 108,
+   "h": 52,
+   "side": "left",
+   "html": "<b>DC 16</b>: roll 16 or higher on a d20",
+   "dur": 3.4,
+   "dim": 0.55
+  }
+ },
+ {
+  "id": "c_rows",
+  "dur": 2.3,
+  "params": {
+   "kind": "callout",
+   "x": 850,
+   "y": 400,
+   "w": 1022,
+   "h": 376,
+   "side": "left",
+   "html": "What each roll does",
+   "dur": 2.3,
+   "dim": 0.55
+  }
+ },
+ {
+  "id": "c_seal",
+  "dur": 2.4,
+  "params": {
+   "kind": "callout",
+   "x": 1726,
+   "y": 248,
+   "w": 144,
+   "h": 160,
+   "side": "left",
+   "html": "Locked on <b>Solana</b> before the roll",
+   "dur": 2.4,
+   "dim": 0.55
+  }
+ },
+ {
+  "id": "c_plead",
+  "dur": 2.6,
+  "params": {
+   "kind": "callout",
+   "x": 34,
+   "y": 946,
+   "w": 780,
+   "h": 68,
+   "side": "above",
+   "html": "Plead for a lower DC",
+   "dur": 2.6,
+   "dim": 0.4
+  }
+ },
+ {
+  "id": "c_roll",
+  "dur": 1.8,
+  "params": {
+   "kind": "callout",
+   "x": 1634,
+   "y": 124,
+   "w": 198,
+   "h": 60,
+   "side": "below",
+   "html": "Roll the d20",
+   "dur": 1.8,
+   "dim": 0.4
+  }
+ },
+ {
+  "id": "p_exp",
+  "dur": 4.0,
+  "params": {
+   "kind": "pill",
+   "html": "Solana Explorer · <b>the refused transaction</b>"
+  }
+ },
+ {
+  "id": "c_dc_z",
+  "dur": 3.4,
+  "params": {
+   "kind": "callout",
+   "x": 529,
+   "y": 257,
+   "w": 140,
+   "h": 68,
+   "side": "above",
+   "html": "<b>DC 16</b>: roll 16+ on a 20-sided die",
+   "dur": 3.4,
+   "dim": 0.55
+  }
+ },
+ {
+  "id": "c_rows_z",
+  "dur": 2.3,
+  "params": {
+   "kind": "callout",
+   "x": 529,
+   "y": 332,
+   "w": 1329,
+   "h": 489,
+   "side": "left",
+   "html": "What each roll does",
+   "dur": 2.3,
+   "dim": 0.55
+  }
+ },
+ {
+  "id": "c_seal_z",
+  "dur": 2.4,
+  "params": {
+   "kind": "callout",
+   "x": 1668,
+   "y": 134,
+   "w": 187,
+   "h": 208,
+   "side": "left",
+   "html": "Locked on <b>Solana</b> before the roll",
+   "dur": 2.4,
+   "dim": 0.55
+  }
+ },
+ {
+  "id": "p_t2",
+  "dur": 4.5,
+  "params": {
+   "kind": "pill",
+   "html": "skip to turn 2 · <b>rolled 20: +2 progress</b>"
+  }
+ },
+ {
+  "id": "p_t3",
+  "dur": 3.4,
+  "params": {
+   "kind": "pill",
+   "html": "turn 3 · <b>rolled 15 vs DC 10: +1 progress → 3/3</b>"
+  }
+ }
+]

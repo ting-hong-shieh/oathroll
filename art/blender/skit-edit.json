@@ -1,0 +1,42 @@
+{
+  "frames": 318,
+  "fps": 30,
+  "size": [
+    1920,
+    1080
+  ],
+  "beats": {
+    "coin_slide_start": 67,
+    "scribble_start": 149,
+    "chain_drop_start": 199,
+    "chain_impact": 220,
+    "shrug": 259,
+    "reaction_hold_start": 301
+  },
+  "card_blank_quad_impact_px": [
+    [
+      829,
+      815
+    ],
+    [
+      1102,
+      815
+    ],
+    [
+      1097,
+      759
+    ],
+    [
+      834,
+      759
+    ]
+  ],
+  "card_blank_rect_impact_px": [
+    834,
+    759,
+    1097,
+    815
+  ],
+  "rectangle_convention": "x_left,y_top,x_right,y_bottom; origin top-left",
+  "engine": "CYCLES"
+}

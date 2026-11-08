@@ -1,0 +1,71 @@
+{
+ "engine": "elevenlabs",
+ "voice_id": "bIHbv24MWmeRgasZH58o",
+ "voice_name": "Will",
+ "model": "eleven_multilingual_v2",
+ "voice_settings": {
+  "stability": 0.38,
+  "similarity_boost": 0.75,
+  "style": 0.35,
+  "use_speaker_boost": true
+ },
+ "note": "Showcase-style narration (v3). 'at' is filled in by the edit.",
+ "lines": [
+  {
+   "id": "N01",
+   "tts": "The game master just agreed to lower my difficulty..."
+  },
+  {
+   "id": "N01b",
+   "tts": "and Solana said no."
+  },
+  {
+   "id": "N02",
+   "tts": "From the M L H Solana Hackathon, this is Oath-roll!"
+  },
+  {
+   "id": "N03",
+   "tts": "You're Wren, stealing a silver bell clapper. You get five turns to fill the progress bar. Each turn, type whatever you try."
+  },
+  {
+   "id": "N04",
+   "tts": "The Keeper, an AI game master, answers with a D C, the number you need on a d20, and what happens on each result. Then it's sealed on Solana."
+  },
+  {
+   "id": "N05",
+   "tts": "Before you roll, you can plead for an easier D C. Plain demands get you nowhere."
+  },
+  {
+   "id": "N06",
+   "tts": "Flattery, though? He agrees to fourteen."
+  },
+  {
+   "id": "N07",
+   "tts": "He really sends that change to Solana, with your words in it. And the program refuses. Table Sealed. The D C stays at sixteen."
+  },
+  {
+   "id": "N08",
+   "tts": "Now roll. The number comes from Magic Block's verifiable randomness, right on chain."
+  },
+  {
+   "id": "N08b",
+   "tts": "A two. That's a setback."
+  },
+  {
+   "id": "N09",
+   "tts": "Every roll gets a proof page. Your browser checks on Solana that the ruling was sealed before the roll, and that the dice came from the V R F."
+  },
+  {
+   "id": "N10",
+   "tts": "Fill the bar before the tide comes back, and the clapper is yours."
+  },
+  {
+   "id": "N11",
+   "tts": "And every plea Solana refused ends up here, on the Wall of Refused Pleas."
+  },
+  {
+   "id": "N12",
+   "tts": "Oath-roll. Running on Solana devnet, with the code and every transaction on GitHub."
+  }
+ ]
+}

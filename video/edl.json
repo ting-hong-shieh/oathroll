@@ -1,0 +1,19 @@
+{
+  "note": "Times are seconds in each take.mp4 (0 = first frame). Segment C is one continuous take from the plea to the DC check after Explorer; never cut or speed it.",
+  "segments": [
+    {"id": "cold",     "take": "r2_take2",   "in": 30.6,  "out": 43.6,  "vo": "V01 V02"},
+    {"id": "type",     "take": "r1_take2",   "in": 5.2,   "out": 14.9,  "vo": "V03"},
+    {"id": "sealed",   "take": "r1_take2",   "in": 21.2,  "out": 25.6,  "vo": "V04", "label": "skipped 6 s · Haiku + seal transaction"},
+    {"id": "demand",   "take": "r1_take2",   "in": 25.6,  "out": 31.6,  "vo": "V05"},
+    {"id": "oneTake",  "take": "r1_take2",   "in": 37.6,  "out": 69.4,  "vo": "V06 V07", "uncut": true},
+    {"id": "roll",     "take": "r1_take2",   "in": 69.4,  "out": 82.0,  "vo": "V08", "label": "real time"},
+    {"id": "proof",    "take": "r1_take2",   "in": 83.0,  "out": 94.0,  "vo": "V09"},
+    {"id": "callback", "take": "r1_take2",   "in": 110.4, "out": 115.6, "vo": "V10"},
+    {"id": "win",      "take": "r2_take2",   "in": 119.6, "out": 125.6, "vo": "V11"},
+    {"id": "wall",     "take": "wall_take1", "in": 2.6,   "out": 8.6,   "vo": "V12"},
+    {"id": "end",      "card": "end",        "dur": 4.0,  "vo": "V13"}
+  ],
+  "overlays": [
+    {"from": 0.3, "to": 5.0, "lines": ["Oathroll", "MLH Solana Hackathon 2026 · recorded on Solana devnet"]}
+  ]
+}

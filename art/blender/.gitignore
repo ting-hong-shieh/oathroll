@@ -1,3 +1,11 @@
 __pycache__/
 *.blend1
 *.blend2
+
+# Cold-open working scene and full-resolution sequence
+skit.blend
+renders/skit/
+renders/skit-measure/
+renders/skit-preview/
+renders/skit-review/
+renders/skit-*.log

@@ -1,0 +1,93 @@
+{
+  "hold_source_frame": 300,
+  "hold_copies": 18,
+  "frames": 318,
+  "fps": 30,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "total_bytes": 635042743,
+  "hold_301_318_pixel_identical": true,
+  "largest_adjacent_frame_changes": [
+    [
+      220,
+      12.573
+    ],
+    [
+      214,
+      11.499
+    ],
+    [
+      213,
+      11.485
+    ],
+    [
+      216,
+      10.417
+    ],
+    [
+      215,
+      10.369
+    ],
+    [
+      219,
+      9.951
+    ],
+    [
+      217,
+      9.606
+    ],
+    [
+      212,
+      9.117
+    ],
+    [
+      222,
+      8.663
+    ],
+    [
+      218,
+      8.633
+    ],
+    [
+      221,
+      8.619
+    ],
+    [
+      35,
+      7.067
+    ],
+    [
+      34,
+      7.004
+    ],
+    [
+      36,
+      6.567
+    ],
+    [
+      224,
+      6.342
+    ]
+  ],
+  "final_render_seconds": 606.022,
+  "final_seconds_per_frame": 1.906,
+  "all_recorded_render_minutes": 16.896,
+  "peak_gpu_total_mib": 2390.95703125,
+  "peak_ram_mib": 2478,
+  "gpu_scope_wall_minutes_all_attempts": 21.186,
+  "gpu_scope_count": 67,
+  "all_gpu_scopes_accounted_for": true,
+  "source_sha256": {
+    "skit.py": "84fcd9fa16df6fea84cf9c56c98ed7a23f69b9e15e2558bad8687a17d7bb7254",
+    "oathroll.py": "63c7a4d1509a71ee6ea776caef8bed3dcf844607d137b73873c1125a45e56a07",
+    "skit.blend": "d12d6f05e15c163a82cc616fe703543ad5f66c3dbdb8f53f327105b387deba80"
+  },
+  "review_mp4": {
+    "frames": 318,
+    "seconds": 10.6,
+    "bytes": 4176269,
+    "decode_check": "passed"
+  }
+}
