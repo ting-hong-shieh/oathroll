@@ -1,0 +1,34 @@
+{
+  "upgrade": {
+    "at_local": "2026-11-08 17:35:10 +08:00",
+    "program": "HaaUtRdJLNAhEShaA7ibDDHoz5truec23qf5ZSq4eGGd",
+    "tx": "4cGmHmGUqinMP3fQVqEafqhU5KphDEieMYpuPQQKhMgAL7AfQfAEbB4WbdjFbsFwbXgsrcLEs6yGRQv3kmrquPWb",
+    "deployed_slot": 519977489,
+    "note": "Adds request_overdue_roll (OVERDUE_SLOTS = 1500). The on-chain program data was dumped after the upgrade and is byte-identical to the build (220520 bytes)."
+  },
+  "turn_after_upgrade": {
+    "note": "One turn through the public demo API; verified with app/lib/rpc-verify.ts (browser verifier code) from devnet RPC.",
+    "check": "H6koKNTTREwgPeTmEDyk9W9x9ZnDsqQDZgEUfsa4js58",
+    "dc": 8,
+    "attemptedDc": 6,
+    "refused_amendment_tx": "2tMkM1xmadXabscE9gt465iTc5pgGfwdESCm51kVRAmQbeoBPG5cvPKEsLC8u4zd5u9kbe3oa4WKc8a6mQCsPgdx",
+    "seal_tx": "4abktZDTP1W8gHvSBDZksUi3ndhDodzhKthzJ8mhposbJkg55iQWsoyecfvw2PZAw7JsK2A9Gz61nxpPovmiSHGi",
+    "request_tx": "3edqBQpi7X4UqpKMArR3MQxTjoUPGVTtubaiUgcXge87D8GSybeCLErVWmkrsfkuV1rKSn7Q8ngZJACj5cjP6JeN",
+    "resolve_tx": "26nvtk1gafzXERYbYrHgdhxZ6UMfTbBWCsvZz2R6b6FAtiemanUqVmyNG8S3KAz4SKCXmffKH4T24TRTr7GzKiVh",
+    "roll": 6,
+    "outcome": 1,
+    "verify": [true, true, true, true]
+  },
+  "overdue_roll": {
+    "note": "The Keeper sealed this check and never rolled it. A fresh wallet (not the Keeper) requested the roll with app/scripts/recover_roll.ts after 1500 slots; the MagicBlock VRF oracle called back; verified with app/lib/rpc-verify.ts.",
+    "check": "H1vycykHDUsbbdgmGtMrJDwNaGSFTTAVb3psgHKEHhgm",
+    "seal_slot": 519977731,
+    "open_from_slot": 519979231,
+    "caller": "53jsD7UA7cY67ZykJs1GeTkwh9DAeaY4Z9mzxJuqZfdi",
+    "seal_tx": "YYoqoSAAJ782raC28kUGumksGKort8mYHsHiZYYWaSuGmAHPYykNUFUMxAX45cGQUVJfK2VNPoGM65catqTaMhe",
+    "overdue_request_tx": "5HRdYfhWp9A5ZpLoT4gsdoeg56CGKUnet8sfiuEzoHQzb8DL5VCKZUFRb7G4XW8365SBF9kNyHNof3qJaqZN32fi",
+    "resolve_tx": "4S1S6atf6Fb8Gy9UWqjd45mGQjMZnyKJWh4nKbRX9vHQrAAJSbyR7DuEd6wcYt1GdeK44TyXeBLYz1AjykuKEzaf",
+    "roll": 20,
+    "verify": [true, true, true, true]
+  }
+}

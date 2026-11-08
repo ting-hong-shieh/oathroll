@@ -5,6 +5,8 @@
 //!   draft_check  -> Draft     (the Keeper may still revise it with amend_check)
 //!   seal_check   -> Sealed    (DC and all four outcomes are frozen on-chain)
 //!   request_roll -> Pending   (verifiable randomness is requested from MagicBlock VRF)
+//!                             (if the Keeper stalls, anyone may call request_overdue_roll
+//!                              once OVERDUE_SLOTS have passed since sealing)
 //!   callback     -> Resolved  (the program, not the AI, picks the outcome and applies it)
 //!
 //! Once a check is sealed nothing can change it: amend_check fails with `TableSealed`.
@@ -34,6 +36,11 @@ pub const MAX_PLEA_LEN: usize = 160;
 pub const START_NERVE: i8 = 3;
 pub const START_TIDE: u8 = 5;
 pub const GOAL_PROGRESS: u8 = 3;
+
+/// Slots after sealing before anyone, not only the Keeper, may request the roll.
+/// About ten minutes of devnet slots: long enough that a bystander cannot snatch the roll while the
+/// player is still reading the ruling or writing a plea, short enough to recover a stalled game.
+pub const OVERDUE_SLOTS: u64 = 1_500;
 
 /// Outcome rows, in table order.
 pub const DISASTER: u8 = 0; // natural 1
@@ -126,28 +133,24 @@ pub mod oathroll {
 
     /// Ask MagicBlock VRF for randomness. Only a sealed check can be rolled, and only once.
     pub fn request_roll(ctx: Context<RequestRoll>) -> Result<()> {
-        let check_key = ctx.accounts.check.key();
-        let session_key = ctx.accounts.session.key();
-        {
-            let c = &mut ctx.accounts.check;
-            require!(c.status == CheckStatus::Sealed, OathError::NotSealed);
-            c.status = CheckStatus::Pending;
-            c.request_slot = Clock::get()?.slot;
-        }
-        let ix = create_request_scoped_randomness_ix(RequestRandomnessParams {
-            payer: ctx.accounts.gm.key(),
-            oracle_queue: ctx.accounts.oracle_queue.key(),
-            callback_program_id: ID,
-            callback_discriminator: instruction::ResolveRoll::DISCRIMINATOR.to_vec(),
-            caller_seed: check_key.to_bytes(),
-            accounts_metas: Some(vec![
-                SerializableAccountMeta { pubkey: check_key, is_signer: false, is_writable: true },
-                SerializableAccountMeta { pubkey: session_key, is_signer: false, is_writable: true },
-            ]),
-            ..Default::default()
-        });
+        let slot = Clock::get()?.slot;
+        begin_roll(&mut ctx.accounts.check, slot)?;
+        let ix = vrf_request_ix(ctx.accounts.gm.key(), ctx.accounts.oracle_queue.key(), ctx.accounts.check.key(), ctx.accounts.session.key());
         ctx.accounts.invoke_signed_vrf(&ctx.accounts.gm.to_account_info(), &ix)?;
-        emit!(RollRequested { check: check_key, slot: ctx.accounts.check.request_slot });
+        emit!(RollRequested { check: ctx.accounts.check.key(), slot });
+        Ok(())
+    }
+
+    /// The same request, open to anyone once the check has sat sealed for OVERDUE_SLOTS.
+    /// A Keeper that stops after sealing cannot strand the turn: any wallet can push the roll and
+    /// pay the request fee, and the program still picks the row from the VRF randomness.
+    pub fn request_overdue_roll(ctx: Context<RequestOverdueRoll>) -> Result<()> {
+        let slot = Clock::get()?.slot;
+        require!(roll_overdue(ctx.accounts.check.seal_slot, slot), OathError::RollNotOverdue);
+        begin_roll(&mut ctx.accounts.check, slot)?;
+        let ix = vrf_request_ix(ctx.accounts.payer.key(), ctx.accounts.oracle_queue.key(), ctx.accounts.check.key(), ctx.accounts.session.key());
+        ctx.accounts.invoke_signed_vrf(&ctx.accounts.payer.to_account_info(), &ix)?;
+        emit!(RollRequested { check: ctx.accounts.check.key(), slot });
         Ok(())
     }
 
@@ -187,6 +190,35 @@ pub mod oathroll {
 }
 
 /// Map a d20 roll to an outcome row. Pure, so the client and verifier use the same rule.
+/// True once a sealed check has waited long enough for anyone to request its roll.
+pub fn roll_overdue(seal_slot: u64, now: u64) -> bool {
+    now >= seal_slot.saturating_add(OVERDUE_SLOTS)
+}
+
+/// Move a sealed check to Pending. Shared by request_roll and request_overdue_roll.
+fn begin_roll(check: &mut Account<Check>, slot: u64) -> Result<()> {
+    require!(check.status == CheckStatus::Sealed, OathError::NotSealed);
+    check.status = CheckStatus::Pending;
+    check.request_slot = slot;
+    Ok(())
+}
+
+/// The VRF request, scoped to this check, with the check and session handed to the callback.
+fn vrf_request_ix(payer: Pubkey, oracle_queue: Pubkey, check: Pubkey, session: Pubkey) -> anchor_lang::solana_program::instruction::Instruction {
+    create_request_scoped_randomness_ix(RequestRandomnessParams {
+        payer,
+        oracle_queue,
+        callback_program_id: ID,
+        callback_discriminator: instruction::ResolveRoll::DISCRIMINATOR.to_vec(),
+        caller_seed: check.to_bytes(),
+        accounts_metas: Some(vec![
+            SerializableAccountMeta { pubkey: check, is_signer: false, is_writable: true },
+            SerializableAccountMeta { pubkey: session, is_signer: false, is_writable: true },
+        ]),
+        ..Default::default()
+    })
+}
+
 pub fn outcome_row(roll: u8, dc: u8) -> u8 {
     if roll == 1 {
         DISASTER
@@ -356,6 +388,25 @@ pub struct RequestRoll<'info> {
     pub oracle_queue: UncheckedAccount<'info>,
 }
 
+/// Anyone may sign and pay; the session's Keeper is not required. Only the timing check differs.
+#[vrf]
+#[derive(Accounts)]
+pub struct RequestOverdueRoll<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    #[account(mut)]
+    pub session: Account<'info, Session>,
+    #[account(mut, has_one = session @ OathError::WrongSession)]
+    pub check: Account<'info, Check>,
+    /// CHECK: the MagicBlock VRF oracle queue
+    #[account(
+        mut,
+        constraint = oracle_queue.key() == vrf::consts::DEFAULT_QUEUE
+            || oracle_queue.key() == vrf::consts::DEFAULT_TEST_QUEUE @ OathError::BadQueue
+    )]
+    pub oracle_queue: UncheckedAccount<'info>,
+}
+
 #[vrf_callback]
 #[derive(Accounts)]
 pub struct ResolveRollCtx<'info> {
@@ -440,6 +491,8 @@ pub enum OathError {
     BadQueue,
     #[msg("Arithmetic overflow.")]
     Overflow,
+    #[msg("Only the Keeper may request this roll until the check has been sealed for OVERDUE_SLOTS.")]
+    RollNotOverdue,
 }
 
 #[cfg(test)]
@@ -483,6 +536,13 @@ mod tests {
         let mut t = table();
         t[2] = o("Success, but you lose nerve and get nowhere.", -1, 0);
         assert!(validate_ruling(0, "Climb", 10, &t).is_err());
+    }
+
+    #[test]
+    fn overdue_rolls_open_after_the_wait() {
+        assert!(!roll_overdue(1_000, 1_000));
+        assert!(!roll_overdue(1_000, 1_000 + OVERDUE_SLOTS - 1));
+        assert!(roll_overdue(1_000, 1_000 + OVERDUE_SLOTS));
     }
 
     #[test]

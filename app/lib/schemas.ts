@@ -37,10 +37,12 @@ export const RollRequestSchema = z.object({ session: signature, check: signature
 // plea: the player's own words to the Keeper (kept on-chain in the refused transaction's logs).
 export const BribeRequestSchema = RollRequestSchema.extend({ plea: z.string().trim().max(400).optional() });
 export const SessionResponseSchema = z.object({ session: signature, title: z.string(), intro: z.string(), stats: StatsSchema });
-export const DeclareResponseSchema = z.object({ check: CheckViewSchema, keeperLine: z.string() });
-export const RollResponseSchema = z.object({ check: CheckViewSchema, stats: StatsSchema, narration: z.string() });
+/** Who wrote a piece of Keeper text: the live model, or the fixed fallback used when the model cannot be reached. */
+export const TextSourceSchema = z.enum(["model", "scripted"]);
+export const DeclareResponseSchema = z.object({ check: CheckViewSchema, keeperLine: z.string(), keeperSource: TextSourceSchema.optional() });
+export const RollResponseSchema = z.object({ check: CheckViewSchema, stats: StatsSchema, narration: z.string(), narrationSource: TextSourceSchema.optional() });
 // tempted=false: the Keeper was not persuaded and sent nothing (error "NotTempted", tx null).
-export const BribeResponseSchema = z.object({ attempted: z.object({ dc: z.number().int() }), error: z.enum(["TableSealed", "NotTempted"]), tx: signature.nullable(), logs: z.array(z.string()), keeperLine: z.string(), tempted: z.boolean().optional(), boundLine: z.string().optional(), plea: z.string().optional(), attemptsLeft: z.number().int().nonnegative().optional() });
+export const BribeResponseSchema = z.object({ attempted: z.object({ dc: z.number().int() }), error: z.enum(["TableSealed", "NotTempted"]), tx: signature.nullable(), logs: z.array(z.string()), keeperLine: z.string(), tempted: z.boolean().optional(), boundLine: z.string().optional(), plea: z.string().optional(), attemptsLeft: z.number().int().nonnegative().optional(), keeperSource: TextSourceSchema.optional() });
 export const CheckResponseSchema = z.object({ check: CheckViewSchema, proof: ProofEvidenceSchema.optional() });
 export type Stats = z.infer<typeof StatsSchema>;
 export type CheckView = z.infer<typeof CheckViewSchema>;

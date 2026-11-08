@@ -8,11 +8,12 @@ export const VRF_PROGRAM_ID = "Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz";
 export const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com";
 
 // Anchor discriminators, copied from the program IDL (lib/chain/idl/oathroll.json).
-const DISC = {
+export const DISC = {
   checkAccount: [184, 116, 144, 69, 156, 212, 121, 212],
   draft: [215, 221, 195, 159, 206, 144, 192, 79],
   seal: [144, 15, 40, 28, 196, 15, 177, 253],
   request: [98, 118, 98, 29, 96, 208, 255, 97],
+  overdueRequest: [3, 71, 93, 239, 220, 79, 131, 215], // request_overdue_roll: anyone, once the check has waited OVERDUE_SLOTS
   resolve: [35, 65, 80, 150, 53, 30, 20, 242],
 };
 const STATUS = ["draft", "sealed", "pending", "resolved"] as const;
@@ -155,7 +156,7 @@ export async function verifyFromRpc(checkAddress: string): Promise<RpcVerdict> {
     for (const ix of programInstructions(tx)) {
       if (!ix.accounts.includes(checkAddress)) continue;
       if (startsWith(ix.data, DISC.seal) || (startsWith(ix.data, DISC.draft) && !txs.seal)) txs.seal = s.signature;
-      if (startsWith(ix.data, DISC.request)) txs.request = s.signature;
+      if (startsWith(ix.data, DISC.request) || startsWith(ix.data, DISC.overdueRequest)) txs.request = s.signature;
       if (startsWith(ix.data, DISC.resolve)) {
         txs.resolve = s.signature;
         callbackRandomness = hex(ix.data.subarray(8, 40));

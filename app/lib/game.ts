@@ -1,5 +1,6 @@
 import type { CheckView, Stats } from "./schemas";
 import type { BribeResponse, SessionResponse } from "./schemas";
+export type TextSource = "model" | "scripted";
 
 export const INITIAL_STATS: Stats = { nerve: 3, tide: 5, progress: 0, goal: 3 };
 export type Ending = "won" | "nerve" | "tide" | null;
@@ -24,21 +25,21 @@ export const ENDINGS = {
 };
 export const SUGGESTIONS = ["Climb the kelp-slick ladder", "Sweet-talk the bell-ringer’s ghost", "Sneak around the broken stair", "Pry the silver clapper loose"];
 
-export interface Turn { check: CheckView; keeperLine: string; narration?: string; bribe?: BribeResponse }
+export interface Turn { check: CheckView; keeperLine: string; keeperSource?: TextSource; narration?: string; narrationSource?: TextSource; bribe?: BribeResponse }
 export interface GameState { session: SessionResponse | null; stats: Stats; turns: Turn[]; refusedPleas?: number }
 export const EMPTY_GAME: GameState = { session: null, stats: INITIAL_STATS, turns: [], refusedPleas: 0 };
 export type GameEvent =
   | { type: "restore"; game: GameState }
   | { type: "begin"; session: SessionResponse }
   | { type: "declare"; turn: Turn }
-  | { type: "resolve"; check: CheckView; stats: Stats; narration: string }
+  | { type: "resolve"; check: CheckView; stats: Stats; narration: string; narrationSource?: TextSource }
   | { type: "bribe"; response: BribeResponse };
 export function gameReducer(state: GameState, event: GameEvent): GameState {
   switch (event.type) {
     case "restore": return event.game;
     case "begin": return { session: event.session, stats: event.session.stats, turns: [], refusedPleas: 0 };
     case "declare": return { ...state, turns: [...state.turns, event.turn] };
-    case "resolve": return { ...state, stats: event.stats, turns: state.turns.map((turn) => turn.check.pubkey === event.check.pubkey ? { ...turn, check: event.check, narration: event.narration } : turn) };
+    case "resolve": return { ...state, stats: event.stats, turns: state.turns.map((turn) => turn.check.pubkey === event.check.pubkey ? { ...turn, check: event.check, narration: event.narration, narrationSource: event.narrationSource } : turn) };
     case "bribe": return { ...state, refusedPleas: (state.refusedPleas ?? 0) + (event.response.error === "TableSealed" ? 1 : 0), turns: state.turns.map((turn, i) => i === state.turns.length - 1 ? { ...turn, bribe: event.response } : turn) };
   }
 }

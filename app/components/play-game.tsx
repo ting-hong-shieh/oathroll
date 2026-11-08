@@ -3,7 +3,7 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import { attemptBribe, createSession, declareAction, explorerTx, getCheck, rollCheck } from "@/lib/api";
-import { BribeResponseSchema, CheckViewSchema, SessionResponseSchema, StatsSchema, type CheckView } from "@/lib/schemas";
+import { BribeResponseSchema, CheckViewSchema, SessionResponseSchema, StatsSchema, TextSourceSchema, type CheckView } from "@/lib/schemas";
 import { EMPTY_GAME, ENDINGS, SUGGESTIONS, endingFor, gameReducer } from "@/lib/game";
 import { Die, type DiePhase } from "./die";
 import { RulingCard, type CardPhase, type BargainBeat, ROW_NAMES } from "./ruling-card";
@@ -13,7 +13,7 @@ import { art, ArtImage } from "./art";
 import { play, type SoundEvent } from "@/lib/sound";
 
 const STORAGE_KEY = "oathroll.expedition.v1";
-const SavedGameSchema = z.object({ session: SessionResponseSchema, stats: StatsSchema, refusedPleas: z.number().int().nonnegative().default(0), turns: z.array(z.object({ check: CheckViewSchema, keeperLine: z.string(), narration: z.string().optional(), bribe: BribeResponseSchema.optional() })) });
+const SavedGameSchema = z.object({ session: SessionResponseSchema, stats: StatsSchema, refusedPleas: z.number().int().nonnegative().default(0), turns: z.array(z.object({ check: CheckViewSchema, keeperLine: z.string(), keeperSource: TextSourceSchema.optional(), narration: z.string().optional(), narrationSource: TextSourceSchema.optional(), bribe: BribeResponseSchema.optional() })) });
 type Phase = "booting" | "ready" | "declaring" | "sealing" | "sealed" | "bribing" | "rolling" | "slowing" | "holding" | "cracking" | "revealing" | "resolved";
 const pause = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 const isBribe = (text: string) => /coin|brib|keeper.*win/i.test(text);
@@ -108,6 +108,7 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
                 saved.stats = result.stats;
                 last.check = result.check;
                 last.narration = result.narration;
+                last.narrationSource = result.narrationSource;
               }
             } catch (err) {
               if (err instanceof Error && "status" in err && err.status === 404) saved = undefined;
@@ -218,9 +219,9 @@ export function PlayGame({ mode }: { mode: "mock" | "chain" }) {
           {game.turns.map((turn, i) => <article key={turn.check.pubkey} className={`narration-entry ${i === game.turns.length - 1 ? "current-entry" : "past-entry"}`}>
 
             <p className="player-action"><span className="mono">{String(turn.check.seq).padStart(2, "0")} / YOU</span>{turn.check.actionText}</p>
-            <p className="keeper-line">“{turn.keeperLine}”</p>
-            {turn.bribe && <div className="bargain-reply" aria-live="polite"><p className="keeper-line bribe-line">“<Typewriter key={`${bargainRevision}-${turn.bribe.keeperLine}`} text={turn.bribe.keeperLine} animate={i === game.turns.length - 1 && bargainBeat === "reply"} speed={Math.min(12, 1200 / Math.max(1, turn.bribe.keeperLine.length))} />”</p>{turn.bribe.error === "NotTempted" && <p className="bargain-note mono">Not tempted. Nothing sent to Solana.</p>}{turn.bribe.boundLine && (i !== game.turns.length - 1 || bargainBeat === "bound") && <p className="keeper-line bound-line">“{turn.bribe.boundLine}”</p>}</div>}
-            {turn.narration && <><p className="narrator-label mono"><span className="verified">✧</span> {ROW_NAMES[turn.check.outcome!].toUpperCase()} <span className="muted">· ROLLED {turn.check.roll}</span></p><p className="resolved-narration"><Typewriter key={turn.check.pubkey} text={turn.narration} animate={typedCheck === turn.check.pubkey} /></p></>}
+            <p className="keeper-line">“{turn.keeperLine}”</p>{turn.keeperSource === "scripted" && <p className="bargain-note source-note mono">{mode === "mock" ? "Scripted text (mock mode, no model)." : "Scripted text, not written by the Keeper model (it was not reachable, or this is a fixed server reply)."}</p>}
+            {turn.bribe && <div className="bargain-reply" aria-live="polite"><p className="keeper-line bribe-line">“<Typewriter key={`${bargainRevision}-${turn.bribe.keeperLine}`} text={turn.bribe.keeperLine} animate={i === game.turns.length - 1 && bargainBeat === "reply"} speed={Math.min(12, 1200 / Math.max(1, turn.bribe.keeperLine.length))} />”</p>{turn.bribe.keeperSource === "scripted" && <p className="bargain-note source-note mono">{mode === "mock" ? "Scripted reply (mock mode, no model)." : "Scripted reply: the Keeper model was not reachable."}</p>}{turn.bribe.error === "NotTempted" && <p className="bargain-note mono">Not tempted. Nothing sent to Solana.</p>}{turn.bribe.boundLine && (i !== game.turns.length - 1 || bargainBeat === "bound") && <p className="keeper-line bound-line">“{turn.bribe.boundLine}”</p>}</div>}
+            {turn.narration && <><p className="narrator-label mono"><span className="verified">✧</span> {ROW_NAMES[turn.check.outcome!].toUpperCase()} <span className="muted">· ROLLED {turn.check.roll}</span></p><p className="resolved-narration"><Typewriter key={turn.check.pubkey} text={turn.narration} animate={typedCheck === turn.check.pubkey} /></p>{turn.narrationSource === "scripted" && mode !== "mock" && <p className="bargain-note source-note mono">The sealed outcome text, shown as written: no live narration this turn.</p>}</>}
           </article>)}
 
           {!!game.turns.length && <section className="ledger" aria-label="History"><div className="ledger-title mono"><h2>HISTORY</h2></div><ol>{game.turns.map(({ check: entry }) => <li key={entry.pubkey} className="mono"><span>#{String(entry.seq).padStart(2, "0")}</span><a href={explorerTx(entry.txs.seal)} target="_blank" rel="noreferrer" title={entry.txs.seal}>Seal tx ↗</a><span>{entry.roll ?? "sealed"}</span><Link className={entry.status === "resolved" ? "verified" : "muted"} href={`/verify/${entry.pubkey}`}>{entry.status === "resolved" ? "✓" : "◇"} Proof</Link></li>)}</ol></section>}

@@ -3641,6 +3641,7 @@ the die and stats keep their place. */
 .whisper-warning { font-size: 13px; line-height: 1.6; color: var(--faded); }
 .whisper-warning .mono { display: block; color: var(--gilt); font-size: 12px; }
 .bargain-note { color: var(--gilt); font-size: 12px; line-height: 1.6; }
+.narration-entry .source-note, .narration-entry > p.source-note:not(.narrator-label):not(.player-action) { margin: -6px 0 14px; color: var(--gilt); opacity: .75; font-size: 12px; line-height: 1.5; font-style: normal; }
 .bold-label { margin-left: 10px; border: 1px solid currentColor; padding: 2px 5px; color: var(--vermilion); }
 .dc-original { transition: opacity 250ms; }
 .dc-original--crossed { text-decoration: line-through; text-decoration-color: var(--vermilion); opacity: .55; }

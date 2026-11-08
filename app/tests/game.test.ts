@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { applyOutcome, endingFor, gameReducer, INITIAL_STATS, selectOutcome, EMPTY_GAME } from "../lib/game";
 import { decodeHash, sigilPath } from "../lib/sigil";
 import { canonicalTable, seededD20, tableHash, verifyProof } from "../lib/proof";
-import type { CheckView } from "../lib/schemas";
+import { DeclareResponseSchema, type CheckView } from "../lib/schemas";
 import { rulingFor } from "../lib/mock/tables";
 
 test("natural 1 and 20 override the DC; all other d20 results use DC", () => {
@@ -58,7 +58,10 @@ test("reducer resolves a matching check without mutating prior state", () => {
   const untempted = gameReducer(refused, { type: "bribe", response: { attempted: { dc: check.dc }, error: "NotTempted", tx: null, logs: [], keeperLine: "No." } });
   assert.equal(untempted.refusedPleas, 1, "Untempted replies must preserve the ending’s refusal count");
   assert.equal(gameReducer(untempted, { type: "begin", session }).refusedPleas, 0);
-
+  const scripted = gameReducer(gameReducer(started, { type: "declare", turn: { check, keeperLine, keeperSource: "scripted" } }), { type: "resolve", check: { ...check, status: "resolved", roll: 7, outcome: 1 }, stats: INITIAL_STATS, narration: "x", narrationSource: "scripted" });
+  assert.equal(scripted.turns[0].keeperSource, "scripted", "The UI must be able to say when a fixed table wrote the ruling");
+  assert.equal(scripted.turns[0].narrationSource, "scripted");
+  assert.equal(DeclareResponseSchema.parse({ check, keeperLine, keeperSource: "model" }).keeperSource, "model", "The client schema must keep the source field instead of stripping it");
 });
 
 

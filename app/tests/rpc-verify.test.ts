@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { base58Decode, dcBand, decodeCheck, outcomeRow, PROGRAM_ID } from "../lib/rpc-verify";
+import { base58Decode, dcBand, decodeCheck, DISC, outcomeRow, PROGRAM_ID } from "../lib/rpc-verify";
+import idl from "../lib/chain/idl/oathroll.json";
 import { vrfD20 } from "../lib/proof";
 
 test("base58 decodes the program id to 32 bytes", () => {
@@ -53,4 +54,14 @@ test("decodeCheck reads the Check layout and rejects other accounts", () => {
   assert.equal(vrfD20(c.randomness), 8);
   parts[0] = 0;
   assert.throws(() => decodeCheck(Uint8Array.from(parts)));
+});
+
+test("the verifier's discriminators match the program IDL, including the overdue roll", () => {
+  const ix = (name: string) => idl.instructions.find((i) => i.name === name)!.discriminator;
+  assert.deepEqual(DISC.draft, ix("draft_check"));
+  assert.deepEqual(DISC.seal, ix("seal_check"));
+  assert.deepEqual(DISC.request, ix("request_roll"));
+  assert.deepEqual(DISC.overdueRequest, ix("request_overdue_roll"));
+  assert.deepEqual(DISC.resolve, ix("resolve_roll"));
+  assert.deepEqual(DISC.checkAccount, idl.accounts.find((a) => a.name === "Check")!.discriminator);
 });

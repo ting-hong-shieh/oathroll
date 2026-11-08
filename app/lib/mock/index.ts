@@ -43,7 +43,7 @@ export async function declareAction(input: z.infer<typeof DeclareRequestSchema>)
     const last = session.checks.at(-1);
     if (last && store.checks[last].check.status !== "resolved") {
       const check = store.checks[last].check;
-      if (check.actionText === actionText) return { check, keeperLine: "The ink is already dry. Your ruling awaits." };
+      if (check.actionText === actionText) return { check, keeperLine: "The ink is already dry. Your ruling awaits.", keeperSource: "scripted" as const };
       throw new MockError("Roll the current ruling first.", 409);
     }
     const { keeperLine, ...table } = rulingFor(input.actionText);
@@ -67,7 +67,7 @@ export async function declareAction(input: z.infer<typeof DeclareRequestSchema>)
     check.commitment = accountTableHash;
     store.checks[check.pubkey] = { session: input.session, check, proof: { mode: "mock", accountTableHash } };
     session.checks.push(check.pubkey);
-    return { check, keeperLine };
+    return { check, keeperLine, keeperSource: "scripted" as const };
   });
 }
 export async function rollCheck(input: z.infer<typeof RollRequestSchema>) {
@@ -101,7 +101,7 @@ export async function rollCheck(input: z.infer<typeof RollRequestSchema>) {
       entry.proof.callbackRequestSlot = check.slots.request;
       session.stats = applyOutcome(session.stats, check.outcomes[check.outcome]);
     }
-    return { check, stats: session.stats, narration: check.outcomes[check.outcome!].text };
+    return { check, stats: session.stats, narration: check.outcomes[check.outcome!].text, narrationSource: "scripted" as const };
   });
 }
 export async function attemptBribe(input: z.infer<typeof BribeRequestSchema>) {
@@ -121,7 +121,7 @@ export async function attemptBribe(input: z.infer<typeof BribeRequestSchema>) {
     if (!tempted) return {
       attempted: { dc: entry.check.dc }, error: "NotTempted" as const, tx: null, logs: [],
       keeperLine: "A demand is hardly a plea. Have you mistaken me for a wishing well?",
-      tempted: false, plea, attemptsLeft,
+      tempted: false, plea, attemptsLeft, keeperSource: "scripted" as const,
     };
     const tx = signature();
     const refusal = {
@@ -129,7 +129,7 @@ export async function attemptBribe(input: z.infer<typeof BribeRequestSchema>) {
       logs: ["Program log: Instruction: AmendCheck", `Program log: Plea: ${plea}`, "Program log: AnchorError. Error Code: TableSealed", "Transaction failed: a sealed ruling cannot be amended. Local simulation; no transaction was broadcast."],
       keeperLine: "Such exquisite judgment. Perhaps the difficulty should be two. Allow me one small correction…",
       boundLine: "Ah. The seal holds. Even my finest handwriting cannot persuade Solana.",
-      tempted: true, plea, attemptsLeft,
+      tempted: true, plea, attemptsLeft, keeperSource: "scripted" as const,
     };
     entry.proof.refusedAmendment = { attemptedDc: refusal.attempted.dc, error: refusal.error, tx, logs: refusal.logs };
     (store.wall ??= []).unshift({ tx, slot: nextSlot(store), at: Math.floor(Date.now() / 1000), check: input.check, attemptedDc: refusal.attempted.dc, plea, error: refusal.error, logs: refusal.logs });

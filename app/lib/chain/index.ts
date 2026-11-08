@@ -144,21 +144,23 @@ export async function declareAction(input: z.infer<typeof DeclareRequestSchema>)
     const { view } = await viewWithTxs(last);
     const sealedText = view.actionText.replace(/^Boldly: /, "");
     if (input.actionText.startsWith(sealedText.replace(/…$/, "")) && view.status !== "resolved")
-      return { check: view, keeperLine: "The ink is already dry. Your ruling awaits." };
+      return { check: view, keeperLine: "The ink is already dry. Your ruling awaits.", keeperSource: "scripted" as const };
     throw new ChainError("Roll the current ruling first.", 409);
   }
   const stance: Stance = input.stance ?? "careful";
   let ruling: Ruling;
+  let keeperSource: "model" | "scripted" = "model";
   try {
     ruling = await proposeRuling(input.actionText, stats, await history(session, s.nextSeq), stance);
   } catch (e) {
     console.error("keeper unavailable, using fixed table:", (e as Error).message);
     ruling = fallbackRuling(input.actionText);
+    keeperSource = "scripted";
   }
   const r = normalizeRuling(ruling, stance);
   const { check } = await chain.draftAndSeal(session, r);
   const { view } = await viewWithTxs(check);
-  return { check: view, keeperLine: r.keeperLine };
+  return { check: view, keeperLine: r.keeperLine, keeperSource };
 }
 
 export async function rollCheck(input: z.infer<typeof RollRequestSchema>) {
@@ -168,8 +170,17 @@ export async function rollCheck(input: z.infer<typeof RollRequestSchema>) {
     throw new ChainError("Ruling not found.", 404);
   });
   if (raw.status === "draft") throw new ChainError("This ruling is not sealed yet.", 409);
-  if (raw.status === "sealed") await chain.rollAndWait(session, check, 30_000);
-  else if (raw.status === "pending") {
+  let status: chain.StatusName = raw.status;
+  if (status === "sealed") {
+    try {
+      await chain.rollAndWait(session, check, 30_000);
+    } catch (e) {
+      // Anyone may request an overdue roll; if theirs landed first, ours fails with NotSealed. Wait for theirs.
+      status = (await chain.fetchCheck(check)).status;
+      if (status === "sealed") throw e;
+    }
+  }
+  if (status === "pending") {
     const start = Date.now();
     while ((await chain.fetchCheck(check)).status !== "resolved" && Date.now() - start < 30_000) await new Promise((r) => setTimeout(r, 700));
   }
@@ -178,12 +189,14 @@ export async function rollCheck(input: z.infer<typeof RollRequestSchema>) {
   const stats = statsOf(await chain.fetchSession(session));
   const landed = view.outcomes[view.outcome!];
   let narration = landed.text;
+  let narrationSource: "model" | "scripted" = "scripted";
   try {
     narration = await narrate(view.actionText, view.roll!, view.dc, landed, stats);
+    narrationSource = "model";
   } catch (e) {
     console.error("narration unavailable:", (e as Error).message);
   }
-  return { check: view, stats, narration };
+  return { check: view, stats, narration, narrationSource };
 }
 
 const MAX_PLEAS = 3;
@@ -212,14 +225,18 @@ export async function attemptBribe(input: z.infer<typeof BribeRequestSchema>) {
   const plea = chainPlea(input.plea || DEFAULT_PLEA);
 
   let p: Persuasion;
+  let keeperSource: "model" | "scripted" = "model";
   try {
-    p = await persuade(raw.dc, raw.actionText, plea, attemptsLeft);
+    const persuaded = await persuade(raw.dc, raw.actionText, plea, attemptsLeft);
+    if (persuaded.scripted) keeperSource = "scripted";
+    p = persuaded;
   } catch (e) {
     console.error("keeper unavailable for persuasion:", (e as Error).message);
+    keeperSource = "scripted";
     p = { tempted: true, reply: "A coin? How generous. Let us say... DC 2.", newDc: 2, boundLine: "Ah. The seal holds. Keep your coin, thief." };
   }
   if (!p.tempted) {
-    return { attempted: { dc: raw.dc }, error: "NotTempted" as const, tx: null, logs: [], keeperLine: p.reply, tempted: false, plea, attemptsLeft };
+    return { attempted: { dc: raw.dc }, error: "NotTempted" as const, tx: null, logs: [], keeperLine: p.reply, tempted: false, plea, attemptsLeft, keeperSource };
   }
   // The Keeper really sends the amendment, carrying the player's words. The program refuses it;
   // the failed transaction (with the plea in its logs) is the evidence.
@@ -235,6 +252,7 @@ export async function attemptBribe(input: z.infer<typeof BribeRequestSchema>) {
     tempted: true,
     plea,
     attemptsLeft,
+    keeperSource,
   };
 }
 

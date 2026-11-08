@@ -46,8 +46,9 @@ OATHROLL_MOCK=0 node scripts/select-backend.mjs
 unset OATHROLL_MOCK
 ```
 
-Local end-to-end checks need `solana-test-validator`; see
-[`app/scripts/local_e2e.ts`](app/scripts/local_e2e.ts). They are separate from
+Local end-to-end checks need `solana-test-validator` with the devnet VRF program
+and queue loaded; see [`app/scripts/local_e2e.ts`](app/scripts/local_e2e.ts) and
+[`app/scripts/overdue_e2e.ts`](app/scripts/overdue_e2e.ts). They are separate from
 the mock-mode app checks.
 
 ## Report a bug
