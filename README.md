@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <a href="https://youtu.be/Rb8yvJ0JmdQ">Demo video (1:52)</a> ·
   <a href="#run-locally">Play locally</a> ·
   <a href="#how-a-turn-works">How a turn works</a> ·
   <a href="#evidence">Evidence</a> ·
@@ -30,7 +31,7 @@
 
 A real turn on devnet (8 Nov 2026). Flattery about the Keeper's handwriting moved it to write a 14; the amendment transaction failed with `TableSealed`, so the sealed card still reads DC 16, and the plea is kept in that failed transaction's logs.
 
-Built for the MLH Solana Hackathon (November 2026).
+Built for the MLH Solana Hackathon (November 2026). Demo video: [youtu.be/Rb8yvJ0JmdQ](https://youtu.be/Rb8yvJ0JmdQ) (1:52, gameplay recorded on devnet).
 
 You play Wren, a bell-thief climbing a drowned bell tower. You type any action you like and choose to act carefully or boldly. The Keeper, an AI game master, rules on it: it picks a difficulty and writes all four possible outcomes. The ruling is written to a Solana account and sealed **before** any randomness exists, and you can read all of it before you roll. Only then does the program request a d20 from MagicBlock's verifiable random function (VRF). The program, not the AI, maps the roll to an outcome.
 
@@ -144,6 +145,8 @@ I had not written a Solana program with an oracle callback before this weekend. 
 ## How it was built
 
 Built during the hackathon by Elias Shieh with AI assistance: Claude Code and Codex for code, image generation and Blender for art (see `art/CREDITS.md`). In the game, the Keeper's text is written live by Claude Haiku.
+
+The demo video is built by the scripts in [`video/`](video) from screen recordings of devnet play. Narration is a synthetic voice from ElevenLabs (elevenlabs.io), the music was generated with ACE-Step 1.5, and the sound effects are Kenney's (CC0).
 
 If the Keeper's model cannot be reached, the game falls back to fixed text so play continues: fixed rulings from `app/lib/mock/tables.ts`, and for a plea a fixed reply that agrees and asks for DC 2. The fallback ruling is still sealed and checked by the program like any other, and the amendment is still sent and refused; only the words are not the model's.
 
